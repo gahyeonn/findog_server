@@ -43,4 +43,10 @@ public class FileControlService {
         }
     }
 
+    // 파일을 삭제 메소드
+    public void deleteImage(String fileUrl){
+        String[] fileName = fileUrl.split("/");
+        s3Service.deleteFile("images/" + fileName[fileName.length-1]);
+    }
+
 }

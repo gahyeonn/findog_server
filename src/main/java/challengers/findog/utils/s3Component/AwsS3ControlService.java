@@ -30,4 +30,9 @@ public class AwsS3ControlService implements ControlService{
         return amazonS3.getUrl(bucket, fileName).toString();
     }
 
+    @Override
+    public void deleteFile(String fileName) {
+        amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
+    }
+
 }
