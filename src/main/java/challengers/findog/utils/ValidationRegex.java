@@ -11,4 +11,11 @@ public class ValidationRegex {
         Matcher matcher = pattern.matcher(target);
         return matcher.find();
     }
+
+    public static boolean isRegexImage(String target){ //이미지 확장자 검사
+       String regex = "(.*?)\\.(jpg|jpeg|png|bmp)$";
+       Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(target);
+        return matcher.find();
+    }
 }
