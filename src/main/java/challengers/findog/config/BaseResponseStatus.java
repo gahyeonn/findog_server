@@ -25,6 +25,17 @@ public enum BaseResponseStatus {
     INVALID_IMAGEURL(false, 2004, "올바르지 않은 이미지 형식입니다."),
     INVALID_PAGE(false, 2005, "존재하지 않는 페이지 입니다."),
 
+    // users/sign-up
+    EMPTY_EMAIL(false, 2100, "이메일을 입력해주세요."),
+    INVALID_EMAIL(false, 2101, "올바르지 않은 이메일 형식입니다."),
+    EMPTY_NICKNAME(false, 2102, "닉네임을 입력해주세요."),
+    INVALID_NICKNAME(false, 2103, "올바르지 않은 닉네임 형식입니다."),
+    EMPTY_PASSWORD(false, 2104, "비밀번호를 입력해주세요."),
+    INVALID_PASSWORD(false, 2105, "올바르지 않은 비밀번호 형식입니다."),
+    EMPTY_PHONENUMBER(false, 2106, "핸드폰 번호를 입력해주세요."),
+    INVALID_PHONENUMBER(false, 2107, "올바르지 않은 핸드폰 번호 형식입니다."),
+    INVALID_IMAGEFILEEXTENTION(false, 2108, "올바르지 않은 이미지 파일 형식입니다."),
+
 
     /**
      * 3000 : Response 오류
@@ -32,6 +43,11 @@ public enum BaseResponseStatus {
     // Common
     RESPONSE_ERROR(false, 3000, "값을 불러오는데 실패하였습니다."),
     NOT_EXISTS_WRITING(false, 3001, "존재하지 않는 게시물입니다."),
+
+    // users/sign-up
+    DUPLICATED_EMAIL(false, 3100, "중복된 이메일입니다."),
+    DUPLICATED_NICKNAME(false, 3101, "중복된 닉네임입니다."),
+
 
 
     /**
@@ -54,5 +70,9 @@ public enum BaseResponseStatus {
         this.isSuccess = isSuccess;
         this.code = code;
         this.message = message;
+    }
+
+    public static BaseResponseStatus of(final String errorName){
+        return BaseResponseStatus.valueOf(errorName);
     }
 }
