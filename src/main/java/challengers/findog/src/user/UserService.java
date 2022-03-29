@@ -59,4 +59,13 @@ public class UserService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    //닉네임 중복 검사
+    public int checkNickname(String nickname) throws BaseException{
+        try{
+             return userRepository.checkNickname(nickname);
+        } catch (Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }

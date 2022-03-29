@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+import static challengers.findog.config.BaseResponseStatus.*;
+import static challengers.findog.utils.ValidationRegex.isRegexNickname;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
@@ -35,6 +38,31 @@ public class UserController {
         try{
             PostSignUpRes postSignUpRes = userService.createUser(postSignUpReq);
             return new BaseResponse<>(postSignUpRes);
+        } catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /**
+     * 닉네임 중복 확인 API
+     * @param nickname
+     * @return
+     */
+    @GetMapping("/chk-nickname")
+    public BaseResponse<String> checkNickname(@RequestParam String nickname){
+        if(nickname.equals("") || nickname == null){
+            return new BaseResponse<>(EMPTY_NICKNAME);
+        }
+
+        if(!isRegexNickname(nickname)){
+            return new BaseResponse<>(INVALID_NICKNAME);
+        }
+
+        try{
+            if(userService.checkNickname(nickname) == 1){
+                return new BaseResponse<>(DUPLICATED_NICKNAME);
+            }
+            return new BaseResponse<>("사용 가능한 닉네임입니다.");
         } catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }
