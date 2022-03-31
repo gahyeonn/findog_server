@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 import static challengers.findog.config.BaseResponseStatus.*;
+import static challengers.findog.utils.ValidationRegex.isRegexEmail;
 import static challengers.findog.utils.ValidationRegex.isRegexNickname;
 
 @RestController
@@ -63,6 +64,31 @@ public class UserController {
                 return new BaseResponse<>(DUPLICATED_NICKNAME);
             }
             return new BaseResponse<>("사용 가능한 닉네임입니다.");
+        } catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /**
+     * 이메일 중복 확인 API
+     * @param email
+     * @return
+     */
+    @GetMapping("/chk-email")
+    public BaseResponse<String> checkEmail(@RequestParam String email){
+        if(email.equals("") || email == null){
+            return new BaseResponse<>(EMPTY_EMAIL);
+        }
+
+        if(!isRegexEmail(email)){
+            return new BaseResponse<>(INVALID_EMAIL);
+        }
+
+        try{
+            if(userService.checkEmail(email) == 1){
+                return new BaseResponse<>(DUPLICATED_EMAIL);
+            }
+            return new BaseResponse<>("사용 가능한 이메일입니다.");
         } catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }
