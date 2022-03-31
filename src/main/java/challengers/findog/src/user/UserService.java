@@ -68,4 +68,13 @@ public class UserService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    //이메일 중복 검사
+    public int checkEmail(String email) throws BaseException{
+        try{
+            return userRepository.checkEmail(email);
+        } catch (Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }
