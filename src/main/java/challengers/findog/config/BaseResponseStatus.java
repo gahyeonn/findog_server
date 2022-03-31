@@ -36,6 +36,9 @@ public enum BaseResponseStatus {
     INVALID_PHONENUMBER(false, 2107, "올바르지 않은 핸드폰 번호 형식입니다."),
     INVALID_IMAGEFILEEXTENTION(false, 2108, "올바르지 않은 이미지 파일 형식입니다."),
 
+    //users/leave
+    EMPTY_USERID(false, 2110, "userId를 입력해주세요."),
+    DIFFERENT_PASSWORD(false, 2109, "틀린 비밀번호입니다."),
 
     /**
      * 3000 : Response 오류
@@ -48,6 +51,8 @@ public enum BaseResponseStatus {
     DUPLICATED_EMAIL(false, 3100, "중복된 이메일입니다."),
     DUPLICATED_NICKNAME(false, 3101, "중복된 닉네임입니다."),
 
+    //users/leave
+    FAILE_LEAVEUSER(false, 3102, "회원탈퇴에 실패하였습니다."),
 
 
     /**

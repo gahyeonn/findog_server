@@ -4,6 +4,7 @@ import challengers.findog.config.BaseException;
 import challengers.findog.config.BaseResponse;
 import challengers.findog.config.BaseResponseStatus;
 import challengers.findog.config.secret.Secret;
+import challengers.findog.src.user.model.PatchLeaveReq;
 import challengers.findog.src.user.model.PostSignUpReq;
 import challengers.findog.src.user.model.PostSignUpRes;
 import challengers.findog.src.user.model.User;
@@ -25,6 +26,7 @@ public class UserService {
     private final FileControlService fileControlService;
     private final JwtService jwtService;
 
+    //회원가입
     @Transactional(rollbackFor = Exception.class)
     public PostSignUpRes createUser(PostSignUpReq postSignUpReq) throws BaseException {
         if(userRepository.checkEmail(postSignUpReq.getEmail()) == 1){
@@ -76,5 +78,36 @@ public class UserService {
         } catch (Exception e){
             throw new BaseException(DATABASE_ERROR);
         }
+    }
+
+    //회원탈퇴
+    public String leaveUser(PatchLeaveReq patchLeaveReq) throws BaseException{
+        User user;
+        String pwd;
+        try{
+            user = userRepository.getUser(patchLeaveReq.getUserId());
+        } catch (Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+
+        try{
+            pwd = new AES128(Secret.USER_INFO_PASSWORD_KEY).decrypt(user.getPassword());
+        } catch (Exception e){
+            throw new BaseException(PASSWORD_DECRYPTION_ERROR);
+        }
+
+        if(!pwd.equals(patchLeaveReq.getPassword())){
+            throw new BaseException(DIFFERENT_PASSWORD);
+        }
+
+        try{
+            if(userRepository.leaveUser(patchLeaveReq.getUserId()) == 0){
+                throw new BaseException(FAILE_LEAVEUSER);
+            }
+        } catch (Exception e){
+            throw new BaseException(FAILE_LEAVEUSER);
+        }
+
+        return "회원 탈퇴가 성공적으로 완료되었습니다.";
     }
 }
