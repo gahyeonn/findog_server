@@ -37,4 +37,25 @@ public class UserRepository {
         String lastInsertIdQuery = "select last_insert_id()";
         return this.jdbcTemplate.queryForObject(lastInsertIdQuery, int.class);
     }
+
+    //유저 정보 조회
+    public User getUser(int userId){
+        String query = "select * from User where userId = ?";
+        return this.jdbcTemplate.queryForObject(query,
+                (rs, rowNum) -> new User(
+                        rs.getInt("userId"),
+                        rs.getString("email"),
+                        rs.getString("nickname"),
+                        rs.getString("password"),
+                        rs.getString("phoneNum"),
+                        rs.getString("profileUrl"),
+                        rs.getString("userStatus")
+                ), userId);
+    }
+
+    //회원탈퇴
+    public int leaveUser(int userId){
+        String query = "update User set userStatus = 'inactive' where userId = ?";
+        return this.jdbcTemplate.update(query, userId);
+    }
 }

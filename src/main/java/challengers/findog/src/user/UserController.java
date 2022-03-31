@@ -3,9 +3,11 @@ package challengers.findog.src.user;
 import challengers.findog.config.BaseException;
 import challengers.findog.config.BaseResponse;
 import challengers.findog.config.BaseResponseStatus;
+import challengers.findog.src.user.model.PatchLeaveReq;
 import challengers.findog.src.user.model.PostSignUpReq;
 import challengers.findog.src.user.model.PostSignUpRes;
 import challengers.findog.utils.JwtService;
+import com.fasterxml.jackson.databind.ser.Serializers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
@@ -89,6 +91,22 @@ public class UserController {
                 return new BaseResponse<>(DUPLICATED_EMAIL);
             }
             return new BaseResponse<>("사용 가능한 이메일입니다.");
+        } catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    @PatchMapping("/leave")
+    public BaseResponse<String> updateUserStatus(@RequestBody PatchLeaveReq patchLeaveReq){
+        if(patchLeaveReq.getUserId() < 1){
+            return new BaseResponse<>(EMPTY_USERID);
+        }
+        if(patchLeaveReq.getPassword().equals("") || patchLeaveReq.getPassword() == null){
+            return new BaseResponse<>(EMPTY_PASSWORD);
+        }
+
+        try{
+            return new BaseResponse<>(userService.leaveUser(patchLeaveReq));
         } catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }
