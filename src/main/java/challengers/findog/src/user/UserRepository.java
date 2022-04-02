@@ -40,7 +40,7 @@ public class UserRepository {
 
     //유저 정보 조회
     public User getUser(int userId){
-        String query = "select * from User where userId = ?";
+        String query = "select * from User where userId = ? and userStatus = 'active'";
         return this.jdbcTemplate.queryForObject(query,
                 (rs, rowNum) -> new User(
                         rs.getInt("userId"),
@@ -57,5 +57,20 @@ public class UserRepository {
     public int leaveUser(int userId){
         String query = "update User set userStatus = 'inactive' where userId = ?";
         return this.jdbcTemplate.update(query, userId);
+    }
+
+    //로그인
+    public User getUserByEmail(String email){
+        String query = "select * from User where email = ? and userStatus = 'active'";
+        return this.jdbcTemplate.queryForObject(query,
+                (rs, rowNum) -> new User(
+                        rs.getInt("userId"),
+                        rs.getString("email"),
+                        rs.getString("nickname"),
+                        rs.getString("password"),
+                        rs.getString("phoneNum"),
+                        rs.getString("profileUrl"),
+                        rs.getString("userStatus")
+                ), email);
     }
 }
