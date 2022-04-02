@@ -135,4 +135,14 @@ public class UserService {
 
         return new PostLoginRes(user.getUserId(), jwtService.createJwt(user.getUserId()), user.getProfileUrl());
     }
+
+    //자동 로그인
+    public PostLoginRes autoLogIn(int userId, String jwt) throws BaseException{
+        try{
+            User user = userRepository.getUser(userId);
+            return new PostLoginRes(user.getUserId(), jwt, user.getProfileUrl());
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }
