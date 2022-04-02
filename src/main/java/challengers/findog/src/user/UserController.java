@@ -3,9 +3,7 @@ package challengers.findog.src.user;
 import challengers.findog.config.BaseException;
 import challengers.findog.config.BaseResponse;
 import challengers.findog.config.BaseResponseStatus;
-import challengers.findog.src.user.model.PatchLeaveReq;
-import challengers.findog.src.user.model.PostSignUpReq;
-import challengers.findog.src.user.model.PostSignUpRes;
+import challengers.findog.src.user.model.*;
 import challengers.findog.utils.JwtService;
 import com.fasterxml.jackson.databind.ser.Serializers;
 import lombok.RequiredArgsConstructor;
@@ -108,6 +106,21 @@ public class UserController {
         try{
             return new BaseResponse<>(userService.leaveUser(patchLeaveReq));
         } catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    @PostMapping("/log-in")
+    public BaseResponse<PostLoginRes> logIn(@Valid @RequestBody PostLoginReq postLoginReq, BindingResult br){
+        if(br.hasErrors()){
+            String error = br.getAllErrors().get(0).getDefaultMessage();
+            return new BaseResponse<>(BaseResponseStatus.of(error));
+        }
+
+        try{
+            PostLoginRes postLoginRes = userService.logIn(postLoginReq);
+            return new BaseResponse<>(postLoginRes);
+        }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }
     }

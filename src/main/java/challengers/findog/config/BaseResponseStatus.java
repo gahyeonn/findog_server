@@ -54,6 +54,9 @@ public enum BaseResponseStatus {
     //users/leave
     FAILE_LEAVEUSER(false, 3102, "회원탈퇴에 실패하였습니다."),
 
+    //user/log-in
+    NOT_EXISTS_USER(false, 3103, "일치하는 회원정보가 없습니다."),
+
 
     /**
      * 4000 : Database, Server 오류

@@ -4,10 +4,7 @@ import challengers.findog.config.BaseException;
 import challengers.findog.config.BaseResponse;
 import challengers.findog.config.BaseResponseStatus;
 import challengers.findog.config.secret.Secret;
-import challengers.findog.src.user.model.PatchLeaveReq;
-import challengers.findog.src.user.model.PostSignUpReq;
-import challengers.findog.src.user.model.PostSignUpRes;
-import challengers.findog.src.user.model.User;
+import challengers.findog.src.user.model.*;
 import challengers.findog.utils.AES128;
 import challengers.findog.utils.JwtService;
 import challengers.findog.utils.s3Component.FileControlService;
@@ -109,5 +106,33 @@ public class UserService {
         }
 
         return "회원 탈퇴가 성공적으로 완료되었습니다.";
+    }
+
+    //로그인
+    public PostLoginRes logIn(PostLoginReq postLoginReq) throws BaseException {
+        //이메일 확인
+        User user;
+        String pwd;
+        if(userRepository.checkEmail(postLoginReq.getEmail()) == 0){
+            throw new BaseException(NOT_EXISTS_USER);
+        }
+
+        try {
+            user = userRepository.getUserByEmail(postLoginReq.getEmail());
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+
+        try{
+            pwd = new AES128(Secret.USER_INFO_PASSWORD_KEY).decrypt(user.getPassword());
+        } catch (Exception e){
+            throw new BaseException(PASSWORD_DECRYPTION_ERROR);
+        }
+
+        if(!pwd.equals(postLoginReq.getPassword())){
+            throw new BaseException(NOT_EXISTS_USER);
+        }
+
+        return new PostLoginRes(user.getUserId(), jwtService.createJwt(user.getUserId()), user.getProfileUrl());
     }
 }
