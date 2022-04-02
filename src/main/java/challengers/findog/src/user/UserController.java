@@ -94,6 +94,11 @@ public class UserController {
         }
     }
 
+    /**
+     * 회원 탈퇴 API
+     * @param patchLeaveReq
+     * @return
+     */
     @PatchMapping("/leave")
     public BaseResponse<String> updateUserStatus(@RequestBody PatchLeaveReq patchLeaveReq){
         if(patchLeaveReq.getUserId() < 1){
@@ -110,6 +115,12 @@ public class UserController {
         }
     }
 
+    /**
+     * 로그인 API
+     * @param postLoginReq
+     * @param br
+     * @return
+     */
     @PostMapping("/log-in")
     public BaseResponse<PostLoginRes> logIn(@Valid @RequestBody PostLoginReq postLoginReq, BindingResult br){
         if(br.hasErrors()){
@@ -119,6 +130,21 @@ public class UserController {
 
         try{
             PostLoginRes postLoginRes = userService.logIn(postLoginReq);
+            return new BaseResponse<>(postLoginRes);
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /**
+     * 자동 로그인 API
+     * @return
+     */
+    @GetMapping("/auto-logIn")
+    public BaseResponse<PostLoginRes> autoLogIn(){
+        try{
+            int userId = jwtService.getUserIdx();
+            PostLoginRes postLoginRes = userService.autoLogIn(userId, jwtService.getJwt());
             return new BaseResponse<>(postLoginRes);
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
