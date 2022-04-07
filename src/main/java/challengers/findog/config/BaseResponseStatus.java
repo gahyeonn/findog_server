@@ -40,6 +40,10 @@ public enum BaseResponseStatus {
     EMPTY_USERID(false, 2110, "userId를 입력해주세요."),
     DIFFERENT_PASSWORD(false, 2109, "틀린 비밀번호입니다."),
 
+    //comment
+    INVALID_POSTID(false, 2110, "올바르지 않은 postId입니다."),
+    EMPTY_COMMENT(false, 2111, "댓글 내용을 입력해주세요."),
+
     /**
      * 3000 : Response 오류
      */
