@@ -7,6 +7,9 @@ import challengers.findog.src.comment.model.Comment;
 import challengers.findog.src.comment.model.GetCommentRes;
 import challengers.findog.src.comment.model.PostCommentReq;
 import challengers.findog.utils.JwtService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.List;
 
+@Api(tags = "Comment")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/comments")
@@ -30,6 +34,7 @@ public class CommentController {
      * @param br
      * @return
      */
+    @ApiOperation(value = "댓글 & 대댓글 등록", notes = "댓글의 경우 parentCommentId = 0, 대댓글의 경우 parentCommentId를 대댓글을 달 댓글의 id로 설정. JWT 토큰 필수\n Return :  게시글의 댓글 리스트")
     @PostMapping("")
     public BaseResponse<List<GetCommentRes>> createComment(@Valid @RequestBody PostCommentReq postCommentReq, BindingResult br){
         if(br.hasErrors()){
