@@ -12,10 +12,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -45,6 +42,23 @@ public class CommentController {
         try{
             int userId = jwtService.getUserIdx();
             List<GetCommentRes> commentList = commentService.createComment(userId ,postCommentReq);
+            return new BaseResponse<>(commentList);
+        } catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /**
+     * 댓글 조회 기능 API
+     * @param postId
+     * @return
+     */
+    @ApiOperation(value = "댓글 조회", notes = "해당 게시글의 모든 댓글 조회")
+    @ApiImplicitParam(name = "postId", value = "게시글 ID", required = true, dataType = "int")
+    @GetMapping("")
+    public BaseResponse<List<GetCommentRes>> getCommentList(@RequestParam int postId){
+        try{
+            List<GetCommentRes> commentList = commentService.getCommentList(postId);
             return new BaseResponse<>(commentList);
         } catch (BaseException e){
             return new BaseResponse<>(e.getStatus());

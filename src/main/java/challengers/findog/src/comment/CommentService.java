@@ -41,4 +41,18 @@ public class CommentService {
         String newDate = date.substring(0, date.length()-3);
         return newDate.replace('-', '.');
     }
+
+    //댓글 조회
+    public List<GetCommentRes> getCommentList(int postId) throws BaseException{
+        try{
+            List<GetCommentRes> commentList = commentRepository.getCommentList(postId);
+
+            for(GetCommentRes comment : commentList){
+                comment.setCommentUpdateAt(changeDateFormat(comment.getCommentUpdateAt()));
+            }
+            return commentList;
+        } catch (Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }
