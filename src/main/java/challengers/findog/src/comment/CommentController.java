@@ -53,6 +53,8 @@ public class CommentController {
      * @param postId
      * @return
      */
+    @ApiOperation(value = "댓글 조회", notes = "해당 게시글의 모든 댓글 조회")
+    @ApiImplicitParam(name = "postId", value = "게시글 ID", required = true, dataType = "int")
     @GetMapping("")
     public BaseResponse<List<GetCommentRes>> getCommentList(@RequestParam int postId){
         try{
