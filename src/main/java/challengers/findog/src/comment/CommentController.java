@@ -72,6 +72,7 @@ public class CommentController {
      * @param comment
      * @return
      */
+    @ApiOperation(value = "댓글 수정", notes = "JWT token 필요")
     @PatchMapping("")
     public BaseResponse<List<GetCommentRes>> modifyComment(@RequestBody Comment comment){
         try{
