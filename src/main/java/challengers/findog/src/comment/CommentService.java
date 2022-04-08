@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static challengers.findog.config.BaseResponseStatus.DATABASE_ERROR;
+import static challengers.findog.config.BaseResponseStatus.FAILE_MODIFY_COMMENT;
 
 @RequiredArgsConstructor
 @Service
@@ -49,6 +50,24 @@ public class CommentService {
 
             for(GetCommentRes comment : commentList){
                 comment.setCommentUpdateAt(changeDateFormat(comment.getCommentUpdateAt()));
+            }
+            return commentList;
+        } catch (Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    //댓글 수정
+    @Transactional
+    public List<GetCommentRes> modifyComment(Comment comment) throws BaseException{
+        try{
+            if(commentRepository.modifyComment(comment) == 0){
+                throw new BaseException(FAILE_MODIFY_COMMENT);
+            }
+
+            List<GetCommentRes> commentList = commentRepository.getCommentList(comment.getPostId());
+            for(GetCommentRes cmt : commentList){
+                cmt.setCommentUpdateAt(changeDateFormat(cmt.getCommentUpdateAt()));
             }
             return commentList;
         } catch (Exception e){
