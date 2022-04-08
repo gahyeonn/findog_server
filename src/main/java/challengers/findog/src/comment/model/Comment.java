@@ -7,7 +7,6 @@ import lombok.Data;
 import java.sql.Timestamp;
 
 @Data
-@AllArgsConstructor
 public class Comment {
     private int commentId;
     private int parentCommentId;

@@ -43,4 +43,11 @@ public class CommentRepository {
                         rs.getString("commentUpdateAt")
                 )), postId);
     }
+
+    //댓글 수정
+    public int modifyComment(Comment comment){
+        String query = "update Comment set content = ? where commentId = ? and userId = ?";
+        Object[] params = new Object[]{comment.getContent(), comment.getCommentId(), comment.getUserId()};
+        return jdbcTemplate.update(query, params);
+    }
 }

@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+import static challengers.findog.config.BaseResponseStatus.INVALID_USER_JWT;
+
 @Api(tags = "Comment")
 @RequiredArgsConstructor
 @RestController
@@ -60,6 +62,27 @@ public class CommentController {
         try{
             List<GetCommentRes> commentList = commentService.getCommentList(postId);
             return new BaseResponse<>(commentList);
+        } catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /**
+     * 댓글 수정 API
+     * @param comment
+     * @return
+     */
+    @PatchMapping("")
+    public BaseResponse<List<GetCommentRes>> modifyComment(@RequestBody Comment comment){
+        try{
+            int userId = jwtService.getUserIdx();
+            if(userId != comment.getUserId()){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+
+            List<GetCommentRes> commentList = commentService.modifyComment(comment);
+            return new BaseResponse<>(commentList);
+
         } catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }
