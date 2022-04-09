@@ -3,6 +3,7 @@ package challengers.findog.src.comment;
 import challengers.findog.config.BaseException;
 import challengers.findog.config.BaseResponseStatus;
 import challengers.findog.src.comment.model.Comment;
+import challengers.findog.src.comment.model.DeleteCommentRes;
 import challengers.findog.src.comment.model.GetCommentRes;
 import challengers.findog.src.comment.model.PostCommentReq;
 import lombok.RequiredArgsConstructor;
@@ -11,8 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static challengers.findog.config.BaseResponseStatus.DATABASE_ERROR;
-import static challengers.findog.config.BaseResponseStatus.FAILE_MODIFY_COMMENT;
+import static challengers.findog.config.BaseResponseStatus.*;
 
 @RequiredArgsConstructor
 @Service
@@ -70,6 +70,26 @@ public class CommentService {
                 cmt.setCommentUpdateAt(changeDateFormat(cmt.getCommentUpdateAt()));
             }
             return commentList;
+        } catch (Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    //댓글 삭제
+    public List<GetCommentRes> deleteComment(int postId, DeleteCommentRes deleteCommentRes) throws BaseException{
+        try{
+            if(commentRepository.checkParentComment(deleteCommentRes.getCommentId()) == 0){
+                if(commentRepository.deleteComment(deleteCommentRes.getCommentId()) == 0){
+                    throw new BaseException(FAILE_DELETE_COMMENT);
+                }
+            }
+            else{
+                if(commentRepository.deleteParentComment(deleteCommentRes.getCommentId()) == 0){
+                    throw new BaseException(FAILE_DELETE_COMMENT);
+                }
+            }
+
+            return getCommentList(postId);
         } catch (Exception e){
             throw new BaseException(DATABASE_ERROR);
         }

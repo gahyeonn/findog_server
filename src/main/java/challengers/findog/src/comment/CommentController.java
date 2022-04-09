@@ -4,11 +4,13 @@ import challengers.findog.config.BaseException;
 import challengers.findog.config.BaseResponse;
 import challengers.findog.config.BaseResponseStatus;
 import challengers.findog.src.comment.model.Comment;
+import challengers.findog.src.comment.model.DeleteCommentRes;
 import challengers.findog.src.comment.model.GetCommentRes;
 import challengers.findog.src.comment.model.PostCommentReq;
 import challengers.findog.utils.JwtService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiKeyAuthDefinition;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
@@ -85,6 +87,31 @@ public class CommentController {
             return new BaseResponse<>(commentList);
 
         } catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /**
+     * 댓글 삭제 API
+     * 대댓글이 있는 댓글인 경우는 삭제하지 않고 commentStatus = 'deleted'로 변경
+     * @param postId
+     * @param deleteCommentRes
+     * @return
+     */
+    @ApiOperation(value = "댓글 삭제", notes = "JWT token 필요 , 대댓글이 있는 댓글은 commentStatus = 'deleted'로 변경")
+    @ApiImplicitParam(name = "postId", value = "게시글 ID", required = true, dataType = "int", paramType = "path")
+    @DeleteMapping("/{postId}")
+    public BaseResponse<List<GetCommentRes>> deleteComment(@PathVariable("postId") int postId, @RequestBody DeleteCommentRes deleteCommentRes) {
+        try {
+            int userId = jwtService.getUserIdx();
+            if (userId != deleteCommentRes.getUserId()) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+
+            List<GetCommentRes> commentList = commentService.deleteComment(postId, deleteCommentRes);
+            return new BaseResponse<>(commentList);
+
+        } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
     }

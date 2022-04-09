@@ -63,7 +63,7 @@ public enum BaseResponseStatus {
 
     //comment
     FAILE_MODIFY_COMMENT(false, 3104, "댓글 수정에 실패하였습니다."),
-
+    FAILE_DELETE_COMMENT(false, 3105, "댓글 삭제에 실패하였습니다."),
 
     /**
      * 4000 : Database, Server 오류
