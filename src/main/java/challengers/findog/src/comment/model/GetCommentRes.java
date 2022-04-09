@@ -16,4 +16,5 @@ public class GetCommentRes {
     private int postId;
     private String content;
     private String commentUpdateAt;
+    private String commentStatus;
 }

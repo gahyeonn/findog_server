@@ -1,5 +1,7 @@
 package challengers.findog.src.comment.model;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,8 +27,17 @@ public class Comment {
     private String content;
 
     @ApiModelProperty(hidden = true)
+    private String commentStatus;
+
+    @ApiModelProperty(hidden = true)
     private Timestamp commentCreateAt;
 
     @ApiModelProperty(hidden = true)
     private Timestamp commentUpdateAt;
+
+
+    public Comment(int commentId, int userId){
+        this.commentId = commentId;
+        this.userId = userId;
+    }
 }
