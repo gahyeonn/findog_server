@@ -10,6 +10,7 @@ import challengers.findog.src.comment.model.PostCommentReq;
 import challengers.findog.utils.JwtService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiKeyAuthDefinition;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
@@ -97,6 +98,8 @@ public class CommentController {
      * @param deleteCommentRes
      * @return
      */
+    @ApiOperation(value = "댓글 삭제", notes = "JWT token 필요 , 대댓글이 있는 댓글은 commentStatus = 'deleted'로 변경")
+    @ApiImplicitParam(name = "postId", value = "게시글 ID", required = true, dataType = "int", paramType = "path")
     @DeleteMapping("/{postId}")
     public BaseResponse<List<GetCommentRes>> deleteComment(@PathVariable("postId") int postId, @RequestBody DeleteCommentRes deleteCommentRes) {
         try {
