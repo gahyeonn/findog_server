@@ -45,6 +45,13 @@ dependencies {
 	//jwt
 	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
 	compileOnly('io.jsonwebtoken:jjwt:0.9.1')
+
+	// spring cloud starter aws
+	implementation('org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE')
+
+	//swagger
+	// https://mvnrepository.com/artifact/io.springfox/springfox-boot-starter
+	implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
 }
 
 tasks.named('test') {
