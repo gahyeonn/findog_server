@@ -26,12 +26,8 @@ public class CommentService {
             if(commentRepository.createComment(userId, postCommentReq) == 0){
                 throw new BaseException(DATABASE_ERROR);
             }
-            List<GetCommentRes> commentList = commentRepository.getCommentList(postCommentReq.getPostId());
 
-            for(GetCommentRes comment : commentList){
-                comment.setCommentUpdateAt(changeDateFormat(comment.getCommentUpdateAt()));
-            }
-            return commentList;
+            return getCommentList(postCommentReq.getPostId());
         } catch (Exception e){
             throw new BaseException(DATABASE_ERROR);
         }
@@ -65,11 +61,7 @@ public class CommentService {
                 throw new BaseException(FAILE_MODIFY_COMMENT);
             }
 
-            List<GetCommentRes> commentList = commentRepository.getCommentList(comment.getPostId());
-            for(GetCommentRes cmt : commentList){
-                cmt.setCommentUpdateAt(changeDateFormat(cmt.getCommentUpdateAt()));
-            }
-            return commentList;
+            return getCommentList(comment.getPostId());
         } catch (Exception e){
             throw new BaseException(DATABASE_ERROR);
         }
