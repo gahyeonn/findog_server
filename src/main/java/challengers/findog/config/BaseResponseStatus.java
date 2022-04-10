@@ -40,6 +40,10 @@ public enum BaseResponseStatus {
     EMPTY_USERID(false, 2110, "userId를 입력해주세요."),
     DIFFERENT_PASSWORD(false, 2109, "틀린 비밀번호입니다."),
 
+    //comment
+    INVALID_POSTID(false, 2110, "올바르지 않은 postId입니다."),
+    EMPTY_COMMENT(false, 2111, "댓글 내용을 입력해주세요."),
+
     /**
      * 3000 : Response 오류
      */
@@ -56,6 +60,10 @@ public enum BaseResponseStatus {
 
     //user/log-in
     NOT_EXISTS_USER(false, 3103, "일치하는 회원정보가 없습니다."),
+  
+    //comment
+    FAILE_MODIFY_COMMENT(false, 3104, "댓글 수정에 실패하였습니다."),
+    FAILE_DELETE_COMMENT(false, 3105, "댓글 삭제에 실패하였습니다."),
 
     //mypage/{userIdx}
     FAIL_UPDATE_USER_INFO(false, 3200, "회원정보 수정에 실패하였습니다."),

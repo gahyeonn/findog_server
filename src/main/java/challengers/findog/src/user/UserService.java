@@ -78,11 +78,11 @@ public class UserService {
     }
 
     //회원탈퇴
-    public String leaveUser(PatchLeaveReq patchLeaveReq) throws BaseException{
+    public String leaveUser(int userid, PatchLeaveReq patchLeaveReq) throws BaseException{
         User user;
         String pwd;
         try{
-            user = userRepository.getUser(patchLeaveReq.getUserId());
+            user = userRepository.getUser(userid);
         } catch (Exception e){
             throw new BaseException(DATABASE_ERROR);
         }
@@ -98,7 +98,7 @@ public class UserService {
         }
 
         try{
-            if(userRepository.leaveUser(patchLeaveReq.getUserId()) == 0){
+            if(userRepository.leaveUser(userid) == 0){
                 throw new BaseException(FAILE_LEAVEUSER);
             }
         } catch (Exception e){
