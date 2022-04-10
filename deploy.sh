@@ -24,7 +24,7 @@ echo "> Check Current Application Pids"
 
 # pgrep : process id만 추출
 # -f : process 이름으로 검색
-CURRENT_PID=$(pgrep -f mentos)
+CURRENT_PID=$(pgrep -f findog)
 
 echo "> Current Application Pids : $CURRENT_PID"
 
@@ -41,7 +41,7 @@ echo "> Deploy New Application"
 
 # 새로 실행할 jar파일 찾아서
 # 여러 jar파일 중 가장 마지막(최신) 파일을 변수에 저장
-JAR_NAME=$(ls $REPOSITORY/ | grep 'mentos' | tail -n 1)
+JAR_NAME=$(ls $REPOSITORY/ | grep 'findog' | tail -n 1)
 
 echo "> JAR NAME :$JAR_NAME"
 
