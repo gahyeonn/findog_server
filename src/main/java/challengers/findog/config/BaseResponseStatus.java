@@ -60,10 +60,14 @@ public enum BaseResponseStatus {
 
     //user/log-in
     NOT_EXISTS_USER(false, 3103, "일치하는 회원정보가 없습니다."),
-
+  
     //comment
     FAILE_MODIFY_COMMENT(false, 3104, "댓글 수정에 실패하였습니다."),
     FAILE_DELETE_COMMENT(false, 3105, "댓글 삭제에 실패하였습니다."),
+
+    //mypage/{userIdx}
+    FAIL_UPDATE_USER_INFO(false, 3200, "회원정보 수정에 실패하였습니다."),
+
 
     /**
      * 4000 : Database, Server 오류

@@ -33,4 +33,11 @@ public class User {
         this.profileUrl = profileUrl;
         this.userStatus = userStatus;
     }
+
+    public User(int userId, String nickname, String password, String phoneNum){
+        this.userId = userId;
+        this.nickname = nickname;
+        this.password = password;
+        this.phoneNum = phoneNum;
+    }
 }
