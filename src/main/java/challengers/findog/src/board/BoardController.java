@@ -3,10 +3,12 @@ package challengers.findog.src.board;
 import challengers.findog.config.BaseException;
 import challengers.findog.config.BaseResponse;
 import challengers.findog.config.BaseResponseStatus;
+import challengers.findog.src.board.model.PatchBoardReq;
 import challengers.findog.src.board.model.PostBoardReq;
 import challengers.findog.src.board.model.PostBoardRes;
 import challengers.findog.src.mypage.MypageService;
 import challengers.findog.src.mypage.model.PatchUserInfoReq;
+import challengers.findog.src.user.model.PatchLeaveReq;
 import challengers.findog.src.user.model.PostSignUpRes;
 import challengers.findog.src.user.model.User;
 import challengers.findog.utils.JwtService;
@@ -14,20 +16,22 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.sound.midi.Patch;
 import javax.validation.Valid;
 
-import static challengers.findog.config.BaseResponseStatus.INVALID_USER_JWT;
+import static challengers.findog.config.BaseResponseStatus.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/boards")
 public class BoardController {
     private final BoardService boardService;
+    private final JwtService jwtService;
 
     /**
-     * 게시글작성 API
+     * 게시글 작성 API
      *
-     * @return
+     * @return PostBoardRes
      */
     @PostMapping("/post")
     public BaseResponse<PostBoardRes> createBoard(@Valid @ModelAttribute PostBoardReq postBoardReq, BindingResult br) {
@@ -42,5 +46,27 @@ public class BoardController {
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
+    }
+
+    /**
+     * 게시글 수정 API
+     *
+     * @param :postId
+     * @return 수정완료 메세지
+     */
+    @PatchMapping("/update/{postId}")
+    public BaseResponse<String> updateBoard(@PathVariable("postId") int postId, @ModelAttribute PatchBoardReq patchBoardReq) {
+        int userIdxByJwt = 0;
+        try {
+            userIdxByJwt = jwtService.getUserIdx();
+            System.out.println(userIdxByJwt);
+            boardService.updateBoard(userIdxByJwt, postId, patchBoardReq);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+
+        String result = "회원정보가 수정되었습니다.";
+        return new BaseResponse<>(result);
+
     }
 }

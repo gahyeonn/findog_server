@@ -18,7 +18,6 @@ import static challengers.findog.utils.ValidationRegex.isRegexImage;
 @Service
 public class MypageService {
     private final MypageRepository mypageRepository;
-    private final JwtService jwtService;
 
     public void updateUserInfo(User user) throws BaseException {
         try {

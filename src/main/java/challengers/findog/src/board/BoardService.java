@@ -2,8 +2,11 @@ package challengers.findog.src.board;
 
 import challengers.findog.config.BaseException;
 import challengers.findog.config.secret.Secret;
+import challengers.findog.src.board.model.PatchBoardReq;
 import challengers.findog.src.board.model.PostBoardReq;
 import challengers.findog.src.board.model.PostBoardRes;
+import challengers.findog.src.user.model.User;
+import challengers.findog.utils.AES128;
 import challengers.findog.utils.s3Component.FileControlService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,7 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final FileControlService fileControlService;
 
+    //게시글 작성
     @Transactional(rollbackFor = Exception.class)
     public PostBoardRes createBoard(PostBoardReq postBoardReq) throws BaseException {
         try {
@@ -37,6 +41,18 @@ public class BoardService {
                 }
             }
             return new PostBoardRes(postId, postBoardReq.getUserId());
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    //게시글 수정
+    public void updateBoard(int userId, int postId, PatchBoardReq patchBoardReq) throws BaseException {
+        try {
+            int result = boardRepository.updateBoard(userId, postId, patchBoardReq);
+            if(result == 0) {
+                throw new BaseException(FAIL_UPDATE_BOARD);
+            }
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

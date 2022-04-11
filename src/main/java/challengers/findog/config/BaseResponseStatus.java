@@ -63,6 +63,9 @@ public enum BaseResponseStatus {
     //boards/post
     FAIL_UPLOAD_IMAGES(false, 3201, "사진 업로드에 실패하였습니다."),
 
+    //boards/post
+    FAIL_UPDATE_BOARD(false, 3201, "게시글 수정에 실패하였습니다."),
+
 
     /**
      * 4000 : Database, Server 오류
