@@ -19,5 +19,5 @@ public class PatchBoardReq {
     @NotBlank(message = "EMPTY_CONTENT")
     private String content;
 
-    //private ArrayList<MultipartFile> imgFiles;
+    private ArrayList<MultipartFile> imgFiles;
 }

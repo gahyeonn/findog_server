@@ -55,11 +55,14 @@ public class BoardController {
      * @return 수정완료 메세지
      */
     @PatchMapping("/update/{postId}")
-    public BaseResponse<String> updateBoard(@PathVariable("postId") int postId, @ModelAttribute PatchBoardReq patchBoardReq) {
-        int userIdxByJwt = 0;
+    public BaseResponse<String> updateBoard(@PathVariable("postId") int postId, @Valid @ModelAttribute PatchBoardReq patchBoardReq, BindingResult br) {
+        if (br.hasErrors()) {
+            String error = br.getAllErrors().get(0).getDefaultMessage();
+            return new BaseResponse<>(BaseResponseStatus.of(error));
+        }
+
         try {
-            userIdxByJwt = jwtService.getUserIdx();
-            System.out.println(userIdxByJwt);
+            int userIdxByJwt = jwtService.getUserIdx();
             boardService.updateBoard(userIdxByJwt, postId, patchBoardReq);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
