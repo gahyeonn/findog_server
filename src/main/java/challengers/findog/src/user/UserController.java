@@ -6,6 +6,8 @@ import challengers.findog.config.BaseResponseStatus;
 import challengers.findog.src.user.model.*;
 import challengers.findog.utils.JwtService;
 import com.fasterxml.jackson.databind.ser.Serializers;
+import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
@@ -29,6 +31,7 @@ public class UserController {
      * @param postSignUpReq
      * @return PostSignUpRes
      */
+
     @PostMapping("/sign-up")
     public BaseResponse<PostSignUpRes> createUser(@Valid @ModelAttribute PostSignUpReq postSignUpReq, BindingResult br){
         if(br.hasErrors()){
@@ -101,15 +104,13 @@ public class UserController {
      */
     @PatchMapping("/leave")
     public BaseResponse<String> updateUserStatus(@RequestBody PatchLeaveReq patchLeaveReq){
-        if(patchLeaveReq.getUserId() < 1){
-            return new BaseResponse<>(EMPTY_USERID);
-        }
         if(patchLeaveReq.getPassword().equals("") || patchLeaveReq.getPassword() == null){
             return new BaseResponse<>(EMPTY_PASSWORD);
         }
 
         try{
-            return new BaseResponse<>(userService.leaveUser(patchLeaveReq));
+            int userid = jwtService.getUserIdx();
+            return new BaseResponse<>(userService.leaveUser(userid, patchLeaveReq));
         } catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }
