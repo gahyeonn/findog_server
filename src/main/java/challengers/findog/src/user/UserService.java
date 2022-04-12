@@ -46,7 +46,7 @@ public class UserService {
             if(!isRegexImage(postSignUpReq.getProfileImg().getOriginalFilename())){
                 throw new BaseException(INVALID_IMAGEFILEEXTENTION);
             }
-            String imgUrl = fileControlService.uploadImage(postSignUpReq.getProfileImg());
+            String imgUrl = fileControlService.uploadImage(postSignUpReq.getProfileImg()); //return값이 url
             user.setProfileUrl(imgUrl);
         }
 
