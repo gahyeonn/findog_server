@@ -38,3 +38,4 @@ out/
 
 ### My Files ###
 /src/main/resources/
+/src/main/java/challengers/findog/config/secret/
