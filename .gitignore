@@ -37,5 +37,5 @@ out/
 .vscode/
 
 ### My Files ###
-/src/main/java/challengers/findog/config/secret/
 /src/main/resources/
+/src/main/java/challengers/findog/config/secret/
