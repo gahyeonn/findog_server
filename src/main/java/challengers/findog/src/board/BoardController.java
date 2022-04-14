@@ -21,6 +21,7 @@ import javax.validation.Valid;
 
 import static challengers.findog.config.BaseResponseStatus.*;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/boards")
