@@ -60,10 +60,23 @@ public enum BaseResponseStatus {
 
     //user/log-in
     NOT_EXISTS_USER(false, 3103, "일치하는 회원정보가 없습니다."),
-
+  
     //comment
     FAILE_MODIFY_COMMENT(false, 3104, "댓글 수정에 실패하였습니다."),
     FAILE_DELETE_COMMENT(false, 3105, "댓글 삭제에 실패하였습니다."),
+
+    //mypage/{userIdx}
+    FAIL_UPDATE_USER_INFO(false, 3200, "회원정보 수정에 실패하였습니다."),
+
+    //boards/post
+    FAIL_UPLOAD_IMAGES(false, 3201, "사진 업로드에 실패하였습니다."),
+
+    //boards/update/post
+    FAIL_UPDATE_BOARD(false, 3202, "게시글 수정에 실패하였습니다."),
+
+    //boards/:postId
+    FAIL_DELETE_IMAGES(false, 3203, "이미지 삭제에 실패하였습니다."),
+
 
     /**
      * 4000 : Database, Server 오류
