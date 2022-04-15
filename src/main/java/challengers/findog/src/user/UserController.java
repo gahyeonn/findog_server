@@ -19,7 +19,6 @@ import static challengers.findog.config.BaseResponseStatus.*;
 import static challengers.findog.utils.ValidationRegex.isRegexEmail;
 import static challengers.findog.utils.ValidationRegex.isRegexNickname;
 
-@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
