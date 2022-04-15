@@ -21,7 +21,6 @@ import java.util.List;
 
 import static challengers.findog.config.BaseResponseStatus.INVALID_USER_JWT;
 
-@CrossOrigin(origins = "http://localhost:3000")
 @Api(tags = "Comment")
 @RequiredArgsConstructor
 @RestController
