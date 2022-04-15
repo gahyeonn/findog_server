@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import static challengers.findog.config.BaseResponseStatus.*;
 
-@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/mypage")
