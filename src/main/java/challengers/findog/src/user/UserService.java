@@ -42,7 +42,7 @@ public class UserService {
             throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
         }
 
-        if(!postSignUpReq.getProfileImg().isEmpty() && postSignUpReq.getProfileImg() != null){
+        if(postSignUpReq.getProfileImg() != null && !postSignUpReq.getProfileImg().isEmpty()){
             if(!isRegexImage(postSignUpReq.getProfileImg().getOriginalFilename())){
                 throw new BaseException(INVALID_IMAGEFILEEXTENTION);
             }
