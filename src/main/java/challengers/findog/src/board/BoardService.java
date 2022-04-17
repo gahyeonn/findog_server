@@ -1,7 +1,6 @@
 package challengers.findog.src.board;
 
 import challengers.findog.config.BaseException;
-import challengers.findog.config.secret.Secret;
 import challengers.findog.src.board.model.PatchBoardReq;
 import challengers.findog.src.board.model.PostBoardReq;
 import challengers.findog.src.board.model.PostBoardRes;
@@ -79,6 +78,21 @@ public class BoardService {
                         throw new BaseException(FAIL_UPLOAD_IMAGES);
                 }
             }
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    //게시글 삭제, 해당 게시글 댓글 함께 삭제
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteBoard(int postId) throws BaseException {
+        try {
+            //todo 댓글 삭제
+
+            //게시글 삭제
+            int result = boardRepository.deleteBoard(postId);
+            if(result == 0)
+                throw new BaseException(FAIL_DELETE_BOARD);
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

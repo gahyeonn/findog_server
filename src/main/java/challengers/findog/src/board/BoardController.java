@@ -3,20 +3,15 @@ package challengers.findog.src.board;
 import challengers.findog.config.BaseException;
 import challengers.findog.config.BaseResponse;
 import challengers.findog.config.BaseResponseStatus;
+import challengers.findog.src.board.model.DeleteBoardReq;
 import challengers.findog.src.board.model.PatchBoardReq;
 import challengers.findog.src.board.model.PostBoardReq;
 import challengers.findog.src.board.model.PostBoardRes;
-import challengers.findog.src.mypage.MypageService;
-import challengers.findog.src.mypage.model.PatchUserInfoReq;
-import challengers.findog.src.user.model.PatchLeaveReq;
-import challengers.findog.src.user.model.PostSignUpRes;
-import challengers.findog.src.user.model.User;
 import challengers.findog.utils.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.sound.midi.Patch;
 import javax.validation.Valid;
 
 import static challengers.findog.config.BaseResponseStatus.*;
@@ -60,16 +55,41 @@ public class BoardController {
             String error = br.getAllErrors().get(0).getDefaultMessage();
             return new BaseResponse<>(BaseResponseStatus.of(error));
         }
-
         try {
-            int userIdxByJwt = jwtService.getUserIdx();
-            boardService.updateBoard(userIdxByJwt, postId, patchBoardReq);
+            int userId = jwtService.getUserIdx();
+            if (userId != patchBoardReq.getUserId()) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            boardService.updateBoard(userId, postId, patchBoardReq);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
 
         String result = "회원정보가 수정되었습니다.";
         return new BaseResponse<>(result);
+    }
 
+    /**
+     * 게시글 삭제 API
+     *
+     * @param :postId
+     * @return 수정완료 메세지
+     */
+    @DeleteMapping("/{postId}")
+    public BaseResponse<String> deleteBoard(@PathVariable("postId") int postId, @RequestBody DeleteBoardReq deleteBoardReq) {
+        try {
+            //유저 권한 검증
+            int userId = jwtService.getUserIdx();
+            if (userId != deleteBoardReq.getUserId()) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            //게시글 삭제
+            boardService.deleteBoard(postId);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+
+        String result = "게시글이 삭제되었습니다.";
+        return new BaseResponse<>(result);
     }
 }

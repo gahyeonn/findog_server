@@ -55,7 +55,13 @@ public class BoardRepository {
 
     //게시글 수정 - 게시글 사진 삭제
     public int deleteImg(int postId) {
-        String query = "DELETE FROM Image WHERE postId = ?";
+        String query = "delete FROM Image WHERE postId = ?";
+        return this.jdbcTemplate.update(query, postId);
+    }
+
+    //게시글 삭제
+    public int deleteBoard(int postId) {
+        String query = "delete FROM Board WHERE postId = ?";
         return this.jdbcTemplate.update(query, postId);
     }
 }
