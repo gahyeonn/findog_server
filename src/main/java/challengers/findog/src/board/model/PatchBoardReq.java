@@ -10,6 +10,8 @@ import java.util.ArrayList;
 @Data
 public class PatchBoardReq {
 
+    private int userId;
+
     @NotBlank(message = "EMPTY_TITLE")
     private String title;
 

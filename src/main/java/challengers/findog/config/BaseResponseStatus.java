@@ -60,7 +60,7 @@ public enum BaseResponseStatus {
 
     //user/log-in
     NOT_EXISTS_USER(false, 3103, "일치하는 회원정보가 없습니다."),
-  
+
     //comment
     FAILE_MODIFY_COMMENT(false, 3104, "댓글 수정에 실패하였습니다."),
     FAILE_DELETE_COMMENT(false, 3105, "댓글 삭제에 실패하였습니다."),
@@ -68,14 +68,13 @@ public enum BaseResponseStatus {
     //mypage/{userIdx}
     FAIL_UPDATE_USER_INFO(false, 3200, "회원정보 수정에 실패하였습니다."),
 
-    //boards/post
+    //boards
     FAIL_UPLOAD_IMAGES(false, 3201, "사진 업로드에 실패하였습니다."),
-
-    //boards/update/post
     FAIL_UPDATE_BOARD(false, 3202, "게시글 수정에 실패하였습니다."),
-
-    //boards/:postId
     FAIL_DELETE_IMAGES(false, 3203, "이미지 삭제에 실패하였습니다."),
+    FAIL_DELETE_BOARD(false, 3204, "존재하지 않는 게시글입니다."),
+    FAIL_GET_BOARD_IMAGE(false, 3205, "해당 게시글 사진 조회에 실패하였습니다."),
+    FAIL_GET_BOARD_COMMENTLIST(false, 3206, "해당 계시글 댓글 조회에 실패하였습니다."),
 
 
     /**
