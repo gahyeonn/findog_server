@@ -3,11 +3,9 @@ package challengers.findog.src.board;
 import challengers.findog.config.BaseException;
 import challengers.findog.config.BaseResponse;
 import challengers.findog.config.BaseResponseStatus;
-import challengers.findog.src.board.model.DeleteBoardReq;
-import challengers.findog.src.board.model.PatchBoardReq;
-import challengers.findog.src.board.model.PostBoardReq;
-import challengers.findog.src.board.model.PostBoardRes;
+import challengers.findog.src.board.model.*;
 import challengers.findog.utils.JwtService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +26,7 @@ public class BoardController {
      *
      * @return PostBoardRes
      */
+    @ApiOperation(value = "게시글 작성", notes = "body를 포함해서 post request를 보내면 postId와 userId를 리턴")
     @PostMapping("/post")
     public BaseResponse<PostBoardRes> createBoard(@Valid @ModelAttribute PostBoardReq postBoardReq, BindingResult br) {
         if (br.hasErrors()) {
@@ -49,6 +48,7 @@ public class BoardController {
      * @param :postId
      * @return 수정완료 메세지
      */
+    @ApiOperation(value = "게시글 수정", notes = "body값을 모두 포함해서 request 보내야함")
     @PatchMapping("/update/{postId}")
     public BaseResponse<String> updateBoard(@PathVariable("postId") int postId, @Valid @ModelAttribute PatchBoardReq patchBoardReq, BindingResult br) {
         if (br.hasErrors()) {
@@ -65,7 +65,7 @@ public class BoardController {
             return new BaseResponse<>(e.getStatus());
         }
 
-        String result = "회원정보가 수정되었습니다.";
+        String result = "게시글이 수정되었습니다.";
         return new BaseResponse<>(result);
     }
 
@@ -73,10 +73,11 @@ public class BoardController {
      * 게시글 삭제 API
      *
      * @param :postId
-     * @return 수정완료 메세지
+     * @return 삭제완료 메세지
      */
+    @ApiOperation(value = "게시글 삭제", notes = "유저 검증 후 존재하는 게시글에 대해서 해당 게시글, 이미지, 댓글을 모두 삭제")
     @DeleteMapping("/{postId}")
-    public BaseResponse<String> deleteBoard(@PathVariable("postId") int postId, @RequestBody DeleteBoardReq deleteBoardReq) {
+    public BaseResponse<String> deleteBoard(@PathVariable("postId") int postId, @Valid @ModelAttribute DeleteBoardReq deleteBoardReq) {
         try {
             //유저 권한 검증
             int userId = jwtService.getUserIdx();
@@ -92,4 +93,27 @@ public class BoardController {
         String result = "게시글이 삭제되었습니다.";
         return new BaseResponse<>(result);
     }
+
+    /**
+     * 해당 게시글 조회 API
+     *
+     * @param :postId
+     * @return getBoardRes
+     */
+    @ApiOperation(value = "해당 게시글 조회", notes = "해당 게시글을 포함한 이미지, 댓글을 모두 조회")
+    @GetMapping("/{postId}")
+    public BaseResponse<GetBoardRes> getBoard(@PathVariable("postId") int postId) {
+        try {
+            return boardService.getBoard(postId);
+
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /**
+     * 전체 게시글 조회 API
+     *
+     * @return 수정완료 메세지
+     */
 }

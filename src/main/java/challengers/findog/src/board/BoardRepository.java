@@ -1,5 +1,6 @@
 package challengers.findog.src.board;
 
+import challengers.findog.src.board.model.GetBoardRes;
 import challengers.findog.src.board.model.PatchBoardReq;
 import challengers.findog.src.board.model.PostBoardReq;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,9 +8,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
 
 @Repository
 public class BoardRepository {
@@ -53,7 +53,7 @@ public class BoardRepository {
         return this.jdbcTemplate.queryForList(query, String.class, postId);
     }
 
-    //게시글 수정 - 게시글 사진 삭제
+    //게시글 수정/삭제 - 게시글 사진 삭제
     public int deleteImg(int postId) {
         String query = "delete FROM Image WHERE postId = ?";
         return this.jdbcTemplate.update(query, postId);
@@ -61,7 +61,28 @@ public class BoardRepository {
 
     //게시글 삭제
     public int deleteBoard(int postId) {
-        String query = "delete FROM Board WHERE postId = ?";
+        String query = "delete FROM Post WHERE postId = ?";
         return this.jdbcTemplate.update(query, postId);
+    }
+
+    //해당 게시글 조회
+    public List<GetBoardRes> getBoard(int postId) {
+        String query = "select userId, title, category, content, postCreateAt, hits from Post where postId = ?";
+        return jdbcTemplate.query(query,
+                ((rs, rowNum) -> new GetBoardRes(
+                        rs.getInt("userId"),
+                        rs.getString("title"),
+                        rs.getInt("category"),
+                        rs.getString("content"),
+                        rs.getString("postCreateAt"),
+                        rs.getInt("likeCount"),
+                        rs.getInt("hits")
+                )), postId);
+    }
+
+    //해당 게시글 사진 조회
+    public List<String> getBoardImage(int postId) {
+        String query = "select imgUrl from Image inner join Post P on Image.postId = P.postId where P.postId = ?";
+        return this.jdbcTemplate.queryForList(query, String.class, postId);
     }
 }

@@ -1,21 +1,18 @@
 package challengers.findog.src.board;
 
 import challengers.findog.config.BaseException;
+import challengers.findog.config.BaseResponse;
+import challengers.findog.src.board.model.GetBoardRes;
 import challengers.findog.src.board.model.PatchBoardReq;
 import challengers.findog.src.board.model.PostBoardReq;
 import challengers.findog.src.board.model.PostBoardRes;
-import challengers.findog.src.user.model.User;
-import challengers.findog.utils.AES128;
 import challengers.findog.utils.s3Component.FileControlService;
-import com.fasterxml.jackson.databind.ser.Serializers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static challengers.findog.config.BaseResponseStatus.*;
 import static challengers.findog.utils.ValidationRegex.isRegexImage;
@@ -86,13 +83,43 @@ public class BoardService {
     //게시글 삭제, 해당 게시글 댓글 함께 삭제
     @Transactional(rollbackFor = Exception.class)
     public void deleteBoard(int postId) throws BaseException {
-        try {
-            //todo 댓글 삭제
+        //todo 댓글 삭제
+        //이미지 삭제
+        List<String> arr = boardRepository.checkImg(postId); //기존 저장된 img 유무 확인
+        if (arr.size() != 0) { //기존에 저장된 사진이 한 개 이상 있을 때
+            for (String url : arr)  //s3에서 delete
+                fileControlService.deleteImage(url);
+            try {
+                boardRepository.deleteImg(postId); //서버에서 delete
+            } catch (Exception e) {
+                throw new BaseException(FAIL_DELETE_IMAGES);
+            }
+        }
+        //게시글 삭제
+        int result = boardRepository.deleteBoard(postId);
+        if (result == 0) {
+            throw new BaseException(FAIL_DELETE_BOARD);
+        }
+    }
 
-            //게시글 삭제
-            int result = boardRepository.deleteBoard(postId);
-            if(result == 0)
-                throw new BaseException(FAIL_DELETE_BOARD);
+    @Transactional(rollbackFor = Exception.class)
+    public BaseResponse<GetBoardRes> getBoard(int postId) throws BaseException {
+        try {
+            //todo 게시글 조회
+            GetBoardRes getBoardRes = (GetBoardRes) boardRepository.getBoard(postId);
+            try {
+                //todo 사진 조회
+                List<String> imageList = boardRepository.getBoardImage(postId);
+                getBoardRes.setImgUrl(imageList);
+            } catch (Exception e) {
+                throw new BaseException(FAIL_GET_BOARD_IMAGE);
+            }
+            try {
+                //todo 게시글 댓글 조회
+            } catch (Exception e) {
+                throw new BaseException(FAIL_GET_BOARD_COMMENTLIST);
+            }
+            return new BaseResponse<GetBoardRes>(getBoardRes);
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

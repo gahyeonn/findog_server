@@ -72,7 +72,9 @@ public enum BaseResponseStatus {
     FAIL_UPLOAD_IMAGES(false, 3201, "사진 업로드에 실패하였습니다."),
     FAIL_UPDATE_BOARD(false, 3202, "게시글 수정에 실패하였습니다."),
     FAIL_DELETE_IMAGES(false, 3203, "이미지 삭제에 실패하였습니다."),
-    FAIL_DELETE_BOARD(false, 3204, "게시글 삭제에 실패하였습니다."),
+    FAIL_DELETE_BOARD(false, 3204, "존재하지 않는 게시글입니다."),
+    FAIL_GET_BOARD_IMAGE(false, 3205, "해당 게시글 사진 조회에 실패하였습니다."),
+    FAIL_GET_BOARD_COMMENTLIST(false, 3206, "해당 계시글 댓글 조회에 실패하였습니다."),
 
 
     /**
