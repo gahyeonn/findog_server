@@ -5,6 +5,7 @@ import challengers.findog.config.BaseResponse;
 import challengers.findog.config.BaseResponseStatus;
 import challengers.findog.src.board.model.*;
 import challengers.findog.utils.JwtService;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
@@ -49,6 +50,7 @@ public class BoardController {
      * @return 수정완료 메세지
      */
     @ApiOperation(value = "게시글 수정", notes = "body값을 모두 포함해서 request 보내야함")
+    @ApiImplicitParam(name = "postId", value = "게시글 ID", required = true, dataType = "int")
     @PatchMapping("/update/{postId}")
     public BaseResponse<String> updateBoard(@PathVariable("postId") int postId, @Valid @ModelAttribute PatchBoardReq patchBoardReq, BindingResult br) {
         if (br.hasErrors()) {
@@ -76,6 +78,7 @@ public class BoardController {
      * @return 삭제완료 메세지
      */
     @ApiOperation(value = "게시글 삭제", notes = "유저 검증 후 존재하는 게시글에 대해서 해당 게시글, 이미지, 댓글을 모두 삭제")
+    @ApiImplicitParam(name = "postId", value = "게시글 ID", required = true, dataType = "int")
     @DeleteMapping("/{postId}")
     public BaseResponse<String> deleteBoard(@PathVariable("postId") int postId, @Valid @ModelAttribute DeleteBoardReq deleteBoardReq) {
         try {
@@ -101,6 +104,7 @@ public class BoardController {
      * @return getBoardRes
      */
     @ApiOperation(value = "해당 게시글 조회", notes = "해당 게시글을 포함한 이미지, 댓글을 모두 조회")
+    @ApiImplicitParam(name = "postId", value = "게시글 ID", required = true, dataType = "int")
     @GetMapping("/{postId}")
     public BaseResponse<GetBoardRes> getBoard(@PathVariable("postId") int postId) {
         try {

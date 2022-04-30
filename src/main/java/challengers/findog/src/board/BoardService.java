@@ -28,8 +28,7 @@ public class BoardService {
     public PostBoardRes createBoard(PostBoardReq postBoardReq) throws BaseException {
         try {
             int postId = boardRepository.createBoard(postBoardReq);
-
-            if (postBoardReq.getImgFiles() != null) { //imgFile 존재하면
+            if (!postBoardReq.getImgFiles().get(0).getOriginalFilename().isBlank() && postBoardReq.getImgFiles() != null && !postBoardReq.getImgFiles().isEmpty()) { //imgFile 존재하면
                 for (int i = 0; i < postBoardReq.getImgFiles().size(); i++) {
                     MultipartFile img = postBoardReq.getImgFiles().get(i);
                     if (!isRegexImage(img.getOriginalFilename())) {
