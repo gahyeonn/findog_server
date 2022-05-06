@@ -97,23 +97,23 @@ public class BoardController {
         return new BaseResponse<>(result);
     }
 
-    /**
-     * 해당 게시글 조회 API
-     *
-     * @param :postId
-     * @return getBoardRes
-     */
-    @ApiOperation(value = "해당 게시글 조회", notes = "해당 게시글을 포함한 이미지, 댓글을 모두 조회")
-    @ApiImplicitParam(name = "postId", value = "게시글 ID", required = true, dataType = "int")
-    @GetMapping("/{postId}")
-    public BaseResponse<GetBoardRes> getBoard(@PathVariable("postId") int postId) {
-        try {
-            return boardService.getBoard(postId);
-
-        } catch (BaseException e) {
-            return new BaseResponse<>(e.getStatus());
-        }
-    }
+//    /**
+//     * 해당 게시글 조회 API
+//     *
+//     * @param :postId
+//     * @return getBoardRes
+//     */
+//    @ApiOperation(value = "해당 게시글 조회", notes = "해당 게시글을 포함한 이미지, 댓글을 모두 조회")
+//    @ApiImplicitParam(name = "postId", value = "게시글 ID", required = true, dataType = "int")
+//    @GetMapping("/{postId}")
+//    public BaseResponse<GetBoardRes> getBoard(@PathVariable("postId") int postId) {
+//        try {
+//            return boardService.getBoard(postId);
+//
+//        } catch (BaseException e) {
+//            return new BaseResponse<>(e.getStatus());
+//        }
+//    }
 
     /**
      * 전체 게시글 조회 API
