@@ -66,19 +66,21 @@ public class BoardRepository {
     }
 
     //해당 게시글 조회
-    public List<GetBoardRes> getBoard(int postId) {
-        String query = "select userId, title, category, content, postCreateAt, hits from Post where postId = ?";
-        return jdbcTemplate.query(query,
-                ((rs, rowNum) -> new GetBoardRes(
-                        rs.getInt("userId"),
-                        rs.getString("title"),
-                        rs.getInt("category"),
-                        rs.getString("content"),
-                        rs.getString("postCreateAt"),
-                        rs.getInt("likeCount"),
-                        rs.getInt("hits")
-                )), postId);
-    }
+//    public List<GetBoardRes> getBoard(int postId) {
+//        String query = "select userId, nickname, profileUrl, title, category, content, postCreateAt, hits from Post where postId = ?";
+//        return jdbcTemplate.query(query,
+//                ((rs, rowNum) -> new GetBoardRes(
+//                        rs.getInt("userId"),
+//                        rs.getString("nickname"),
+//                        rs.getString("userImgUrl"),
+//                        rs.getString("title"),
+//                        rs.getInt("category"),
+//                        rs.getString("content"),
+//                        rs.getString("postCreateAt"),
+//                        rs.getInt("likeCount"),
+//                        rs.getInt("hits")
+//                )), postId);
+//    }
 
     //해당 게시글 사진 조회
     public List<String> getBoardImage(int postId) {

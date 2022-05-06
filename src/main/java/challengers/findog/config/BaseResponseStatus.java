@@ -75,6 +75,9 @@ public enum BaseResponseStatus {
     FAIL_DELETE_BOARD(false, 3204, "존재하지 않는 게시글입니다."),
     FAIL_GET_BOARD_IMAGE(false, 3205, "해당 게시글 사진 조회에 실패하였습니다."),
     FAIL_GET_BOARD_COMMENTLIST(false, 3206, "해당 게시글 댓글 조회에 실패하였습니다."),
+    EMPTY_TITLE(false, 3207, "제목을 입력해주세요."),
+    EMPTY_CATEGORY(false, 3208, "카테고리를 선택해주세요."),
+    EMPTY_CONTENT(false, 3209, "내용을 입력해주세요."),
 
 
     /**
