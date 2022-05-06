@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static challengers.findog.config.BaseResponseStatus.*;
@@ -28,6 +29,7 @@ public class BoardService {
     @Transactional(rollbackFor = Exception.class)
     public PostBoardRes createBoard(PostBoardReq postBoardReq) throws BaseException {
         try {
+            int postId;
             String title = postBoardReq.getTitle();
             int category = postBoardReq.getCategory();
             String content = postBoardReq.getContent();
@@ -41,8 +43,12 @@ public class BoardService {
             if (content.isEmpty() || content.isBlank()) {
                 throw new BaseException(EMPTY_CONTENT);
             }
+            try {
+                postId = boardRepository.createBoard(postBoardReq);
+            } catch (Exception e) {
+                throw new Exception(Arrays.toString(e.getStackTrace()));
+            }
 
-            int postId = boardRepository.createBoard(postBoardReq);
             if (imgFiles.get(0).getOriginalFilename() != null && !postBoardReq.getImgFiles().get(0).getOriginalFilename().isBlank()) { //imgFile 존재하면
                 try {
                     for (MultipartFile img : imgFiles) {
