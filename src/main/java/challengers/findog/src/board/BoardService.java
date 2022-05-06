@@ -49,19 +49,21 @@ public class BoardService {
                 throw new Exception(Arrays.toString(e.getStackTrace()));
             }
 
-            if (imgFiles.get(0).getOriginalFilename() != null && !postBoardReq.getImgFiles().get(0).getOriginalFilename().isBlank()) { //imgFile 존재하면
-                try {
-                    for (MultipartFile img : imgFiles) {
-                        if (!isRegexImage(img.getOriginalFilename())) {
-                            throw new BaseException(INVALID_IMAGEFILEEXTENTION);
+            if (postBoardReq.getImgFiles() != null) { //imgFile 존재하면
+                if (imgFiles.get(0).getOriginalFilename() != null && !postBoardReq.getImgFiles().get(0).getOriginalFilename().isBlank()) { //imgFile 존재하면
+                    try {
+                        for (MultipartFile img : imgFiles) {
+                            if (!isRegexImage(img.getOriginalFilename())) {
+                                throw new BaseException(INVALID_IMAGEFILEEXTENTION);
+                            }
+                            String imgUrl = fileControlService.uploadImage(img); //return값이 url
+                            int result = boardRepository.createBoardPhoto(postId, imgUrl);
+                            if (result == 0)
+                                throw new BaseException(FAIL_UPLOAD_IMAGES);
                         }
-                        String imgUrl = fileControlService.uploadImage(img); //return값이 url
-                        int result = boardRepository.createBoardPhoto(postId, imgUrl);
-                        if (result == 0)
-                            throw new BaseException(FAIL_UPLOAD_IMAGES);
+                    } catch (Exception e) {
+                        throw new BaseException(FAIL_UPLOAD_IMAGES);
                     }
-                } catch (Exception e) {
-                    throw new BaseException(FAIL_UPLOAD_IMAGES);
                 }
             }
             return new PostBoardRes(postId, postBoardReq.getUserId());
