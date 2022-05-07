@@ -2,10 +2,10 @@ package challengers.findog.src.board;
 
 import challengers.findog.config.BaseException;
 import challengers.findog.config.BaseResponse;
-import challengers.findog.src.board.model.GetBoardRes;
-import challengers.findog.src.board.model.PatchBoardReq;
-import challengers.findog.src.board.model.PostBoardReq;
-import challengers.findog.src.board.model.PostBoardRes;
+import challengers.findog.src.board.model.*;
+import challengers.findog.src.comment.CommentRepository;
+import challengers.findog.src.comment.model.Comment;
+import challengers.findog.src.comment.model.GetCommentRes;
 import challengers.findog.utils.s3Component.FileControlService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +23,7 @@ import static challengers.findog.utils.ValidationRegex.isRegexImage;
 @Service
 public class BoardService {
     private final BoardRepository boardRepository;
+    private final CommentRepository commentRepository;
     private final FileControlService fileControlService;
 
     //게시글 작성
@@ -49,19 +50,21 @@ public class BoardService {
                 throw new Exception(Arrays.toString(e.getStackTrace()));
             }
 
-            if (imgFiles.get(0).getOriginalFilename() != null && !postBoardReq.getImgFiles().get(0).getOriginalFilename().isBlank()) { //imgFile 존재하면
-                try {
-                    for (MultipartFile img : imgFiles) {
-                        if (!isRegexImage(img.getOriginalFilename())) {
-                            throw new BaseException(INVALID_IMAGEFILEEXTENTION);
+            if (postBoardReq.getImgFiles() != null) { //imgFile 존재하면
+                if (imgFiles.get(0).getOriginalFilename() != null && !postBoardReq.getImgFiles().get(0).getOriginalFilename().isBlank()) { //imgFile 존재하면
+                    try {
+                        for (MultipartFile img : imgFiles) {
+                            if (!isRegexImage(img.getOriginalFilename())) {
+                                throw new BaseException(INVALID_IMAGEFILEEXTENTION);
+                            }
+                            String imgUrl = fileControlService.uploadImage(img); //return값이 url
+                            int result = boardRepository.createBoardPhoto(postId, imgUrl);
+                            if (result == 0)
+                                throw new BaseException(FAIL_UPLOAD_IMAGES);
                         }
-                        String imgUrl = fileControlService.uploadImage(img); //return값이 url
-                        int result = boardRepository.createBoardPhoto(postId, imgUrl);
-                        if (result == 0)
-                            throw new BaseException(FAIL_UPLOAD_IMAGES);
+                    } catch (Exception e) {
+                        throw new BaseException(FAIL_UPLOAD_IMAGES);
                     }
-                } catch (Exception e) {
-                    throw new BaseException(FAIL_UPLOAD_IMAGES);
                 }
             }
             return new PostBoardRes(postId, postBoardReq.getUserId());
@@ -125,27 +128,37 @@ public class BoardService {
         }
     }
 
-//    @Transactional(rollbackFor = Exception.class)
-//    public BaseResponse<GetBoardRes> getBoard(int postId) throws BaseException {
-//        try {
-//            //todo 게시글 조회
-//            GetBoardRes getBoardRes = (GetBoardRes) boardRepository.getBoard(postId);
-//            try {
-//                //todo 사진 조회
-//                List<String> imageList = boardRepository.getBoardImage(postId);
-//                getBoardRes.setImgUrl(imageList);
-//            } catch (Exception e) {
-//                throw new BaseException(FAIL_GET_BOARD_IMAGE);
-//            }
-//            try {
-//                //todo 게시글 댓글 조회
-//            } catch (Exception e) {
-//                throw new BaseException(FAIL_GET_BOARD_COMMENTLIST);
-//            }
-//            return new BaseResponse<GetBoardRes>(getBoardRes);
-//        } catch (Exception e) {
-//            throw new BaseException(DATABASE_ERROR);
-//        }
-//    }
+    @Transactional(rollbackFor = Exception.class)
+    public GetBoardRes getBoard(int postId, int userId) throws BaseException {
+        List<String> imgList;
+        List<Comment> commentList;
+        try {
+            //todo 게시글 조회- userId, nickname, userImgUrl, title, category, content, imgUrl, postCreateAt, likeCount, commentCount
+            Board board = boardRepository.getBoard(postId);
+            try {
+                //todo 사진 조회
+                imgList = boardRepository.getBoardImage(postId);
+            } catch (Exception e) {
+                throw new BaseException(FAIL_GET_BOARD_IMAGE);
+            }
+            try {
+                //todo 게시글 댓글 조회- commentList
+//                commentList = commentRepository.getCommentList(postId);
+            } catch (Exception e) {
+                throw new BaseException(FAIL_GET_BOARD_COMMENTLIST);
+            }
+            //todo 조회수- hits
+            boardRepository.viewCount(postId);
+            //todo 사용자 좋아요- userLiked
+            boolean userLiked = false;
+            int liked = boardRepository.userLiked(postId, userId);
+            if(liked > 0)
+                userLiked = true;
+
+            return new GetBoardRes(board, imgList, userLiked);
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }
 
