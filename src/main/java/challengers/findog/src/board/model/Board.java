@@ -11,9 +11,13 @@ import java.util.List;
 public class Board {
     @ApiModelProperty(value = "userId", example = "1", required = true)
     private int userId;
+    @ApiModelProperty(value = "유저 닉네임", example = "abcde", required = true)
     private String nickname;
+    @ApiModelProperty(value = "유저 프로필 이미지", required = true)
     private String userImgUrl;
+    @ApiModelProperty(value = "게시글 제목", example = "제목입니다.", required = true)
     private String title;
+    @ApiModelProperty(value = "게시글 카테고리", example = "1", required = true)
     private int category;
     @ApiModelProperty(value = "게시글 내용", example = "내용입니다.", required = true)
     private String content;
@@ -21,9 +25,10 @@ public class Board {
     private Timestamp postCreateAt;
     private int likeCount;
     private int commentCount;
+    private int hits;
 
     public Board(int userId, String nickname, String userImgUrl, String title, int category, String content,
-                 Timestamp postCreateAt, int likeCount, int commentCount){
+                 Timestamp postCreateAt, int likeCount, int commentCount, int hits){
         this.userId = userId;
         this.nickname = nickname;
         this.userImgUrl = userImgUrl;
@@ -33,6 +38,7 @@ public class Board {
         this.postCreateAt = postCreateAt;
         this.likeCount = likeCount;
         this.commentCount = commentCount;
+        this.hits = hits;
 
     }
 }
