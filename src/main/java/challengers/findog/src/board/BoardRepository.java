@@ -68,7 +68,7 @@ public class BoardRepository {
 
     //해당 게시글 조회
     public Board getBoard(int postId) {
-        String query = "select P.userId, nickname, profileUrl, title, category, P.content, postCreateAt, likeCount, commentCount " +
+        String query = "select P.userId, nickname, profileUrl, title, category, P.content, postCreateAt, likeCount, commentCount, hits " +
                 "from Post P left join User U on P.userId = U.userId " +
                 "left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId " +
                 "left join (SELECT postId, Count(likeId) as likeCount FROM `Like` GROUP BY postId) L on L.postId = P.postId where P.postId =?";
@@ -82,7 +82,8 @@ public class BoardRepository {
                         rs.getString("content"),
                         rs.getTimestamp("postCreateAt"),
                         rs.getInt("likeCount"),
-                        rs.getInt("commentCount")
+                        rs.getInt("commentCount"),
+                        rs.getInt("hits")
                 )), postId);
     }
 
