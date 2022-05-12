@@ -9,6 +9,8 @@ import java.util.List;
 
 @Data
 public class Board {
+    @ApiModelProperty(value = "postId", example = "1", required = true)
+    private int postId;
     @ApiModelProperty(value = "userId", example = "1", required = true)
     private int userId;
     @ApiModelProperty(value = "유저 닉네임", example = "abcde", required = true)
@@ -31,8 +33,9 @@ public class Board {
 
     public Board(){}
 
-    public Board(int userId, String nickname, String userImgUrl, String title, int category, String thumbnail, String content,
+    public Board(int postId, int userId, String nickname, String userImgUrl, String title, int category, String thumbnail, String content,
                  Timestamp postCreateAt, int likeCount, int commentCount, int hits){
+        this.postId = postId;
         this.userId = userId;
         this.nickname = nickname;
         this.userImgUrl = userImgUrl;

@@ -70,7 +70,7 @@ public class BoardRepository {
 
     //해당 게시글 조회
     public Board getBoard(int postId) {
-        String query = "select P.userId, nickname, profileUrl, title, category, thumbnail, P.content, postCreateAt, likeCount, commentCount, hits " +
+        String query = "select P.postId, P.userId, nickname, profileUrl, title, category, thumbnail, P.content, postCreateAt, likeCount, commentCount, hits " +
                 "from Post P left join User U on P.userId = U.userId " +
                 "left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId " +
                 "left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId " +
@@ -78,6 +78,7 @@ public class BoardRepository {
                 "where P.postId =?";
         return jdbcTemplate.queryForObject(query,
                 ((rs, rowNum) -> new Board(
+                        rs.getInt("postId"),
                         rs.getInt("userId"),
                         rs.getString("nickname"),
                         rs.getString("profileUrl"),
@@ -112,7 +113,7 @@ public class BoardRepository {
 
     //게시글 리스트 조회
     public List<Board> getBoardList() {
-        String query = "select P.userId, nickname, profileUrl, title, category, thumbnail, P.content, postCreateAt, likeCount, commentCount, hits " +
+        String query = "select P.postId, P.userId, nickname, profileUrl, title, category, thumbnail, P.content, postCreateAt, likeCount, commentCount, hits " +
                 "from Post P left join User U on P.userId = U.userId " +
                 "left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId " +
                 "left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId " +
