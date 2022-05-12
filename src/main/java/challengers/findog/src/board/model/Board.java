@@ -19,26 +19,30 @@ public class Board {
     private String title;
     @ApiModelProperty(value = "게시글 카테고리", example = "1", required = true)
     private int category;
+    @ApiModelProperty(value = "게시글 썸네일", example = "첫번째 이미지")
+    private String thumbnail;
     @ApiModelProperty(value = "게시글 내용", example = "내용입니다.", required = true)
     private String content;
     @ApiModelProperty(hidden = true)
     private Timestamp postCreateAt;
-    private int likeCount;
-    private int commentCount;
+    private Integer likeCount;
+    private Integer commentCount;
     private int hits;
 
-    public Board(int userId, String nickname, String userImgUrl, String title, int category, String content,
+    public Board(){}
+
+    public Board(int userId, String nickname, String userImgUrl, String title, int category, String thumbnail, String content,
                  Timestamp postCreateAt, int likeCount, int commentCount, int hits){
         this.userId = userId;
         this.nickname = nickname;
         this.userImgUrl = userImgUrl;
         this.title = title;
         this.category = category;
+        this.thumbnail = thumbnail;
         this.content = content;
         this.postCreateAt = postCreateAt;
         this.likeCount = likeCount;
         this.commentCount = commentCount;
         this.hits = hits;
-
     }
 }

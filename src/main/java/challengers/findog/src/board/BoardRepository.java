@@ -5,6 +5,8 @@ import challengers.findog.src.board.model.GetBoardRes;
 import challengers.findog.src.board.model.PatchBoardReq;
 import challengers.findog.src.board.model.PostBoardReq;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -68,10 +70,12 @@ public class BoardRepository {
 
     //해당 게시글 조회
     public Board getBoard(int postId) {
-        String query = "select P.userId, nickname, profileUrl, title, category, P.content, postCreateAt, likeCount, commentCount, hits " +
+        String query = "select P.userId, nickname, profileUrl, title, category, thumbnail, P.content, postCreateAt, likeCount, commentCount, hits " +
                 "from Post P left join User U on P.userId = U.userId " +
                 "left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId " +
-                "left join (SELECT postId, Count(likeId) as likeCount FROM `Like` GROUP BY postId) L on L.postId = P.postId where P.postId =?";
+                "left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId " +
+                "left join (SELECT postId, Count(likeId) as likeCount FROM `Like` GROUP BY postId) L on L.postId = P.postId " +
+                "where P.postId =?";
         return jdbcTemplate.queryForObject(query,
                 ((rs, rowNum) -> new Board(
                         rs.getInt("userId"),
@@ -79,6 +83,7 @@ public class BoardRepository {
                         rs.getString("profileUrl"),
                         rs.getString("title"),
                         rs.getInt("category"),
+                        rs.getString("thumbnail"),
                         rs.getString("content"),
                         rs.getTimestamp("postCreateAt"),
                         rs.getInt("likeCount"),
@@ -87,7 +92,7 @@ public class BoardRepository {
                 )), postId);
     }
 
-    //해당 게시글 사진 조회
+    //해당 게시글 사진 리스트 조회
     public List<String> getBoardImage(int postId) {
         String query = "select imgUrl from Image inner join Post P on Image.postId = P.postId where P.postId = ?";
         return this.jdbcTemplate.queryForList(query, String.class, postId);
@@ -103,5 +108,15 @@ public class BoardRepository {
     public int userLiked(int postId, int userId) {
         String query = "select exists(select likeId from `Like` where postId = ? and userId = ?)";
         return this.jdbcTemplate.queryForObject(query, int.class, postId, userId);
+    }
+
+    //게시글 리스트 조회
+    public List<Board> getBoardList() {
+        String query = "select P.userId, nickname, profileUrl, title, category, thumbnail, P.content, postCreateAt, likeCount, commentCount, hits " +
+                "from Post P left join User U on P.userId = U.userId " +
+                "left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId " +
+                "left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId " +
+                "left join (SELECT postId, Count(likeId) as likeCount FROM `Like` GROUP BY postId) L on L.postId = P.postId ";
+        return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Board.class));
     }
 }

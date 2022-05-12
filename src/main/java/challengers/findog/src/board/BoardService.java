@@ -135,7 +135,7 @@ public class BoardService {
         try {
             //조회수- hits
             boardRepository.viewCount(postId);
-            //게시글 조회- userId, nickname, userImgUrl, title, category, content, imgUrl, postCreateAt, likeCount, commentCount
+            //게시글 조회- userId, nickname, userImgUrl, title, category, thumbnail, content, imgUrl, postCreateAt, likeCount, commentCount
             Board board = boardRepository.getBoard(postId);
             try {
                 //사진 조회- imgList
@@ -156,6 +156,14 @@ public class BoardService {
                 userLiked = true;
 
             return new GetBoardRes(board, imgList, userLiked);
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public List<Board> getBoardList() throws BaseException {
+        try {
+            return boardRepository.getBoardList();
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

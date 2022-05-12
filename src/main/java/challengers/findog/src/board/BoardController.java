@@ -4,14 +4,20 @@ import challengers.findog.config.BaseException;
 import challengers.findog.config.BaseResponse;
 import challengers.findog.config.BaseResponseStatus;
 import challengers.findog.src.board.model.*;
+import challengers.findog.src.comment.model.GetCommentRes;
 import challengers.findog.utils.JwtService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.models.Model;
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.asm.Advice;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import java.util.List;
 
 import static challengers.findog.config.BaseResponseStatus.*;
 
@@ -120,6 +126,16 @@ public class BoardController {
     /**
      * 전체 게시글 조회 API
      *
-     * @return 수정완료 메세지
+     * @return boardList
      */
+    @ApiOperation(value = "게시물 조회", notes = "페이징 처리")
+    @GetMapping("")
+    public BaseResponse<List<Board>> getBoardList(){
+        try{
+            List<Board> boardList = boardService.getBoardList();
+            return new BaseResponse<>(boardList);
+        } catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
 }
