@@ -133,10 +133,12 @@ public class BoardService {
         List<String> imgList;
         List<Comment> commentList;
         try {
-            //todo 게시글 조회- userId, nickname, userImgUrl, title, category, content, imgUrl, postCreateAt, likeCount, commentCount
+            //조회수- hits
+            boardRepository.viewCount(postId);
+            //게시글 조회- userId, nickname, userImgUrl, title, category, thumbnail, content, imgUrl, postCreateAt, likeCount, commentCount
             Board board = boardRepository.getBoard(postId);
             try {
-                //todo 사진 조회
+                //사진 조회- imgList
                 imgList = boardRepository.getBoardImage(postId);
             } catch (Exception e) {
                 throw new BaseException(FAIL_GET_BOARD_IMAGE);
@@ -147,15 +149,21 @@ public class BoardService {
             } catch (Exception e) {
                 throw new BaseException(FAIL_GET_BOARD_COMMENTLIST);
             }
-            //todo 조회수- hits
-            boardRepository.viewCount(postId);
-            //todo 사용자 좋아요- userLiked
+            //사용자 좋아요- userLiked
             boolean userLiked = false;
             int liked = boardRepository.userLiked(postId, userId);
             if(liked > 0)
                 userLiked = true;
 
             return new GetBoardRes(board, imgList, userLiked);
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public List<Board> getBoardList(int page, int size) throws BaseException {
+        try {
+            return boardRepository.getBoardList(page, size);
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
