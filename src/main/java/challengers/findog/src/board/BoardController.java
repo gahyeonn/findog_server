@@ -130,9 +130,9 @@ public class BoardController {
      */
     @ApiOperation(value = "게시물 조회", notes = "페이징 처리")
     @GetMapping("")
-    public BaseResponse<List<Board>> getBoardList(){
+    public BaseResponse<List<Board>> getBoardList(@RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value="size", defaultValue = "5") int size){
         try{
-            List<Board> boardList = boardService.getBoardList();
+            List<Board> boardList = boardService.getBoardList(page, size);
             return new BaseResponse<>(boardList);
         } catch (BaseException e){
             return new BaseResponse<>(e.getStatus());

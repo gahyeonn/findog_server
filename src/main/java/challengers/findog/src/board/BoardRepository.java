@@ -112,12 +112,14 @@ public class BoardRepository {
     }
 
     //게시글 리스트 조회
-    public List<Board> getBoardList() {
+    public List<Board> getBoardList(int page, int size) {
         String query = "select P.postId, P.userId, nickname, profileUrl, title, category, thumbnail, P.content, postCreateAt, likeCount, commentCount, hits " +
                 "from Post P left join User U on P.userId = U.userId " +
                 "left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId " +
                 "left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId " +
-                "left join (SELECT postId, Count(likeId) as likeCount FROM `Like` GROUP BY postId) L on L.postId = P.postId ";
-        return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Board.class));
+                "left join (SELECT postId, Count(likeId) as likeCount FROM `Like` GROUP BY postId) L on L.postId = P.postId " +
+                "order by postId desc, postCreateAt desc " +
+                "limit ? offset ?";
+        return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Board.class), size, (page-1)*size);
     }
 }

@@ -161,9 +161,9 @@ public class BoardService {
         }
     }
 
-    public List<Board> getBoardList() throws BaseException {
+    public List<Board> getBoardList(int page, int size) throws BaseException {
         try {
-            return boardRepository.getBoardList();
+            return boardRepository.getBoardList(page, size);
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
