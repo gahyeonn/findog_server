@@ -145,7 +145,7 @@ public class BoardRepository {
         return this.jdbcTemplate.queryForObject(query, int.class, postId);
     }
 
-//    //게시글 리스트 조회
+//    //게시글 검색
 //    public List<Board> searchBoard(String keyword, int page, int size) {
 //        String query = "select P.postId, P.userId, nickname, profileUrl, title, category, region, thumbnail, P.content, postCreateAt, likeCount, commentCount, hits " +
 //                "from Post P left join User U on P.userId = U.userId " +
