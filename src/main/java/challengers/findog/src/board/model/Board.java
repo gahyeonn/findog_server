@@ -20,7 +20,9 @@ public class Board {
     @ApiModelProperty(value = "게시글 제목", example = "제목입니다.", required = true)
     private String title;
     @ApiModelProperty(value = "게시글 카테고리", example = "1", required = true)
-    private int category;
+    private Integer category;
+    @ApiModelProperty(value = "지역", example = "1", required = true)
+    private Integer region;
     @ApiModelProperty(value = "게시글 썸네일", example = "첫번째 이미지")
     private String thumbnail;
     @ApiModelProperty(value = "게시글 내용", example = "내용입니다.", required = true)
@@ -33,7 +35,7 @@ public class Board {
 
     public Board(){}
 
-    public Board(int postId, int userId, String nickname, String userImgUrl, String title, int category, String thumbnail, String content,
+    public Board(int postId, int userId, String nickname, String userImgUrl, String title, int category, int region, String thumbnail, String content,
                  Timestamp postCreateAt, int likeCount, int commentCount, int hits){
         this.postId = postId;
         this.userId = userId;
@@ -41,6 +43,7 @@ public class Board {
         this.userImgUrl = userImgUrl;
         this.title = title;
         this.category = category;
+        this.region = region;
         this.thumbnail = thumbnail;
         this.content = content;
         this.postCreateAt = postCreateAt;

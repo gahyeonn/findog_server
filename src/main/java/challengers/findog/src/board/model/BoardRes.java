@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class PostBoardRes {
+public class BoardRes {
     private int postId;
     private int userId;
 }
