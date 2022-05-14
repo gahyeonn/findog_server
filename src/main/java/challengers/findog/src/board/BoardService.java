@@ -141,12 +141,6 @@ public class BoardService {
             } catch (Exception e) {
                 throw new BaseException(FAIL_GET_BOARD_IMAGE);
             }
-            try {
-                //todo 게시글 댓글 조회- commentList
-//                commentList = commentRepository.getCommentList(postId);
-            } catch (Exception e) {
-                throw new BaseException(FAIL_GET_BOARD_COMMENTLIST);
-            }
             //사용자 좋아요- userLiked
             boolean userLiked = false;
             int liked = boardRepository.userLiked(postId, userId);
@@ -162,6 +156,14 @@ public class BoardService {
     public List<Board> getBoardList(int page, int size) throws BaseException {
         try {
             return boardRepository.getBoardList(page, size);
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public int getBoardCount() throws BaseException {
+        try {
+            return boardRepository.getBoardCount();
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -195,4 +197,13 @@ public class BoardService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+//    //키워드 검색
+//    public List<Board> searchBoard(String keyword, int page, int size) throws BaseException {
+//        try {
+//            return boardRepository.searchBoard(keyword, page, size);
+//        } catch (Exception e) {
+//            throw new BaseException(DATABASE_ERROR);
+//        }
+//    }
 }
