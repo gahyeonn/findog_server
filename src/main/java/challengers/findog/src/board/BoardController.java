@@ -54,17 +54,13 @@ public class BoardController {
     @ApiOperation(value = "게시글 수정", notes = "body값을 모두 포함해서 request 보내야함")
     @ApiImplicitParam(name = "postId", value = "게시글 ID", required = true, dataType = "int")
     @PatchMapping("/update/{postId}")
-    public BaseResponse<String> updateBoard(@PathVariable("postId") int postId, @Valid @ModelAttribute PatchBoardReq patchBoardReq, BindingResult br) {
-        if (br.hasErrors()) {
-            String error = br.getAllErrors().get(0).getDefaultMessage();
-            return new BaseResponse<>(BaseResponseStatus.of(error));
-        }
+    public BaseResponse<String> updateBoard(@PathVariable("postId") int postId, @Valid @ModelAttribute PatchBoardReq patchBoardReq) {
         try {
             int userId = jwtService.getUserIdx();
-            if (userId != patchBoardReq.getUserId()) {
+            if (userId != boardService.checkAuth(postId)) {
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
-            boardService.updateBoard(userId, postId, patchBoardReq);
+            boardService.updateBoard(postId, patchBoardReq);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
@@ -82,11 +78,11 @@ public class BoardController {
     @ApiOperation(value = "게시글 삭제", notes = "유저 검증 후 존재하는 게시글에 대해서 해당 게시글, 이미지, 댓글을 모두 삭제")
     @ApiImplicitParam(name = "postId", value = "게시글 ID", required = true, dataType = "int")
     @DeleteMapping("/{postId}")
-    public BaseResponse<String> deleteBoard(@PathVariable("postId") int postId, @Valid @ModelAttribute DeleteBoardReq deleteBoardReq) {
+    public BaseResponse<String> deleteBoard(@PathVariable("postId") int postId) {
         try {
             //유저 권한 검증
             int userId = jwtService.getUserIdx();
-            if (userId != deleteBoardReq.getUserId()) {
+            if (userId != boardService.checkAuth(postId)) {
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
             //게시글 삭제
@@ -138,7 +134,7 @@ public class BoardController {
     /**
      * 게시글 좋아요 API
      *
-     * @return 좋아요
+     * @return userId, postId
      */
     @ApiOperation(value = "게시글 좋아요")
     @PostMapping("/like")
@@ -156,7 +152,7 @@ public class BoardController {
     /**
      * 게시글 좋아요 취소 API
      *
-     * @return 좋아요 취소
+     * @return userId, postId
      */
     @ApiOperation(value = "게시글 좋아요")
     @DeleteMapping("/like")
@@ -170,4 +166,10 @@ public class BoardController {
             return new BaseResponse<>(e.getStatus());
         }
     }
+
+    /**
+     * 게시글 검색 API
+     *
+     * @return userId, postId
+     */
 }

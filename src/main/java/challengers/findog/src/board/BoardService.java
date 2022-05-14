@@ -73,9 +73,9 @@ public class BoardService {
 
     //게시글 수정
     @Transactional(rollbackFor = Exception.class)
-    public void updateBoard(int userId, int postId, PatchBoardReq patchBoardReq) throws BaseException {
+    public void updateBoard(int postId, PatchBoardReq patchBoardReq) throws BaseException {
         try {
-            boardRepository.updateBoard(userId, postId, patchBoardReq);
+            boardRepository.updateBoard(postId, patchBoardReq);
 
             if (patchBoardReq.getImgFiles() != null) { //req에 수정할 imgFile 존재하면
                 List<String> arr = boardRepository.checkImg(postId); //기존 저장된 img 유무 확인
@@ -182,6 +182,15 @@ public class BoardService {
         try {
             boardRepository.likeCancelBoard(userId, postId);
             return new BoardRes(userId, postId);
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    //유저 수정, 삭제 권한 확인
+    public int checkAuth(int postId) throws BaseException {
+        try {
+            return boardRepository.checkAuth(postId);
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
