@@ -198,13 +198,13 @@ public class BoardService {
         }
     }
 
-//    //키워드 검색
-//    public List<Board> searchBoard(String keyword, int page, int size) throws BaseException {
-//        try {
-//            return boardRepository.searchBoard(keyword, page, size);
-//        } catch (Exception e) {
-//            throw new BaseException(DATABASE_ERROR);
-//        }
-//    }
+    //키워드 검색
+    public List<Board> searchBoard(String keyword, int page, int size) throws BaseException {
+        try {
+            return boardRepository.searchBoard(keyword, page, size);
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }
 

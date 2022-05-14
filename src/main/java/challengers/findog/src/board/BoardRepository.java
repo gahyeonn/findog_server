@@ -145,16 +145,16 @@ public class BoardRepository {
         return this.jdbcTemplate.queryForObject(query, int.class, postId);
     }
 
-//    //게시글 리스트 조회
-//    public List<Board> searchBoard(String keyword, int page, int size) {
-//        String query = "select P.postId, P.userId, nickname, profileUrl, title, category, region, thumbnail, P.content, postCreateAt, likeCount, commentCount, hits " +
-//                "from Post P left join User U on P.userId = U.userId " +
-//                "left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId " +
-//                "left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId " +
-//                "left join (SELECT postId, Count(likeId) as likeCount FROM `Like` GROUP BY postId) L on L.postId = P.postId " +
-//                "where P.postId > 0 and (title or P.content like concat ('%', ?, '%')) " +
-//                "order by postId desc, postCreateAt desc " +
-//                "limit ? offset ?";
-//        return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Board.class), keyword, size, (page-1)*size);
-//    }
+    //게시글 검색
+    public List<Board> searchBoard(String keyword, int page, int size) {
+        String query = "select P.postId, P.userId, nickname, profileUrl, title, category, region, thumbnail, P.content, postCreateAt, likeCount, commentCount, hits " +
+                "from Post P left join User U on P.userId = U.userId " +
+                "left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId " +
+                "left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId " +
+                "left join (SELECT postId, Count(likeId) as likeCount FROM `Like` GROUP BY postId) L on L.postId = P.postId " +
+                "where P.postId > 0 and ((title like concat ('%', ?, '%')) or (P.content like concat ('%', ?, '%'))) " +
+                "order by postId desc, postCreateAt desc " +
+                "limit ? offset ?";
+        return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Board.class), keyword, keyword, size, (page-1)*size);
+    }
 }
