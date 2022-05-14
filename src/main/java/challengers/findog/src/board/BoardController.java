@@ -4,14 +4,10 @@ import challengers.findog.config.BaseException;
 import challengers.findog.config.BaseResponse;
 import challengers.findog.config.BaseResponseStatus;
 import challengers.findog.src.board.model.*;
-import challengers.findog.src.comment.model.GetCommentRes;
 import challengers.findog.utils.JwtService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.models.Model;
 import lombok.RequiredArgsConstructor;
-import net.bytebuddy.asm.Advice;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,15 +31,15 @@ public class BoardController {
      */
     @ApiOperation(value = "게시글 작성", notes = "body를 포함해서 post request를 보내면 postId와 userId를 리턴")
     @PostMapping("/post")
-    public BaseResponse<PostBoardRes> createBoard(@Valid @ModelAttribute PostBoardReq postBoardReq, BindingResult br) {
+    public BaseResponse<BoardRes> createBoard(@Valid @ModelAttribute PostBoardReq postBoardReq, BindingResult br) {
         if (br.hasErrors()) {
             String error = br.getAllErrors().get(0).getDefaultMessage();
             return new BaseResponse<>(BaseResponseStatus.of(error));
         }
 
         try {
-            PostBoardRes postBoardRes = boardService.createBoard(postBoardReq);
-            return new BaseResponse<>(postBoardRes);
+            BoardRes boardRes = boardService.createBoard(postBoardReq);
+            return new BaseResponse<>(boardRes);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
@@ -135,6 +131,42 @@ public class BoardController {
             List<Board> boardList = boardService.getBoardList(page, size);
             return new BaseResponse<>(boardList);
         } catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /**
+     * 게시글 좋아요 API
+     *
+     * @return 좋아요
+     */
+    @ApiOperation(value = "게시글 좋아요")
+    @PostMapping("/like")
+    public BaseResponse<BoardRes> likeBoard(@Valid @ModelAttribute LikeBoardReq likeBoardReq) {
+        try {
+            int userId = jwtService.getUserIdx();
+            //게시글 삭제
+            BoardRes boardRes = boardService.likeBoard(userId, likeBoardReq.getPostId());
+            return new BaseResponse<>(boardRes);
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /**
+     * 게시글 좋아요 취소 API
+     *
+     * @return 좋아요 취소
+     */
+    @ApiOperation(value = "게시글 좋아요")
+    @DeleteMapping("/like")
+    public BaseResponse<BoardRes> likeCancelBoard(@Valid @ModelAttribute LikeBoardReq likeBoardReq) {
+        try {
+            int userId = jwtService.getUserIdx();
+            //게시글 삭제
+            BoardRes boardRes =boardService.likeCancelBoard(userId, likeBoardReq.getPostId());
+            return new BaseResponse<>(boardRes);
+        } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
     }

@@ -122,4 +122,16 @@ public class BoardRepository {
                 "limit ? offset ?";
         return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Board.class), size, (page-1)*size);
     }
+
+    //게시글 좋아요
+    public int likeBoard(int userId, int postId) {
+        String query = "insert into `Like` (userId, postId) VALUES (?,?)";
+        return this.jdbcTemplate.update(query, userId, postId);
+    }
+
+    //게시글 좋아요 취소
+    public int likeCancelBoard(int userId, int postId) {
+        String query = "delete from `Like` where userId =? and postId =?";
+        return this.jdbcTemplate.update(query, userId, postId);
+    }
 }
