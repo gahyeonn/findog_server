@@ -1,11 +1,9 @@
 package challengers.findog.src.board;
 
 import challengers.findog.src.board.model.Board;
-import challengers.findog.src.board.model.GetBoardRes;
 import challengers.findog.src.board.model.PatchBoardReq;
 import challengers.findog.src.board.model.PostBoardReq;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -42,9 +40,9 @@ public class BoardRepository {
     }
 
     //게시글 수정
-    public int updateBoard(int userId, int postId, PatchBoardReq patchBoardReq) {
-        String query = "update Post set title = ?, category = ?, content = ? where postId = ? and userId = ? ";
-        Object[] postBoardParams = new Object[]{patchBoardReq.getTitle(), patchBoardReq.getCategory(), patchBoardReq.getContent(), postId, userId};
+    public int updateBoard(int postId, PatchBoardReq patchBoardReq) {
+        String query = "update Post set title = ?, category = ?, region = ?, content = ? where postId = ?";
+        Object[] postBoardParams = new Object[]{patchBoardReq.getTitle(), patchBoardReq.getCategory(), patchBoardReq.getRegion(), patchBoardReq.getContent(), postId};
         this.jdbcTemplate.update(query, postBoardParams);
 
         return this.jdbcTemplate.update(query, postBoardParams); // 대응시켜 매핑시켜 쿼리 요청(생성했으면 1, 실패했으면 0)
@@ -70,7 +68,7 @@ public class BoardRepository {
 
     //해당 게시글 조회
     public Board getBoard(int postId) {
-        String query = "select P.postId, P.userId, nickname, profileUrl, title, category, thumbnail, P.content, postCreateAt, likeCount, commentCount, hits " +
+        String query = "select P.postId, P.userId, nickname, profileUrl, title, category, region, thumbnail, P.content, postCreateAt, likeCount, commentCount, hits " +
                 "from Post P left join User U on P.userId = U.userId " +
                 "left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId " +
                 "left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId " +
@@ -84,6 +82,7 @@ public class BoardRepository {
                         rs.getString("profileUrl"),
                         rs.getString("title"),
                         rs.getInt("category"),
+                        rs.getInt("region"),
                         rs.getString("thumbnail"),
                         rs.getString("content"),
                         rs.getTimestamp("postCreateAt"),
@@ -113,7 +112,7 @@ public class BoardRepository {
 
     //게시글 리스트 조회
     public List<Board> getBoardList(int page, int size) {
-        String query = "select P.postId, P.userId, nickname, profileUrl, title, category, thumbnail, P.content, postCreateAt, likeCount, commentCount, hits " +
+        String query = "select P.postId, P.userId, nickname, profileUrl, title, category, region, thumbnail, P.content, postCreateAt, likeCount, commentCount, hits " +
                 "from Post P left join User U on P.userId = U.userId " +
                 "left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId " +
                 "left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId " +
@@ -121,5 +120,22 @@ public class BoardRepository {
                 "order by postId desc, postCreateAt desc " +
                 "limit ? offset ?";
         return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Board.class), size, (page-1)*size);
+    }
+
+    //게시글 좋아요
+    public void likeBoard(int userId, int postId) {
+        String query = "insert into `Like` (userId, postId) VALUES (?,?)";
+        this.jdbcTemplate.update(query, userId, postId);
+    }
+
+    //게시글 좋아요 취소
+    public void likeCancelBoard(int userId, int postId) {
+        String query = "delete from `Like` where userId =? and postId =?";
+        this.jdbcTemplate.update(query, userId, postId);
+    }
+
+    public int checkAuth(int postId) {
+        String query = "select userId from Post where postId = ?";
+        return this.jdbcTemplate.queryForObject(query, int.class, postId);
     }
 }

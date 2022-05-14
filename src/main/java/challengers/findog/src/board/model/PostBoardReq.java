@@ -27,7 +27,11 @@ public class PostBoardReq {
 
     @ApiModelProperty(value = "카테고리", example = "1", required = true)
     @Positive
-    private int category;
+    private Integer category;
+
+    @ApiModelProperty(value = "지역", example = "1", required = true)
+    @Positive
+    private Integer region;
 
     @ApiModelProperty(value = "내용", example = "게시글 내용입니다.", required = true)
     @NotBlank(message = "EMPTY_CONTENT")

@@ -1,11 +1,9 @@
 package challengers.findog.src.board;
 
 import challengers.findog.config.BaseException;
-import challengers.findog.config.BaseResponse;
 import challengers.findog.src.board.model.*;
 import challengers.findog.src.comment.CommentRepository;
 import challengers.findog.src.comment.model.Comment;
-import challengers.findog.src.comment.model.GetCommentRes;
 import challengers.findog.utils.s3Component.FileControlService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,7 +26,7 @@ public class BoardService {
 
     //게시글 작성
     @Transactional(rollbackFor = Exception.class)
-    public PostBoardRes createBoard(PostBoardReq postBoardReq) throws BaseException {
+    public BoardRes createBoard(PostBoardReq postBoardReq) throws BaseException {
         try {
             int postId;
             String title = postBoardReq.getTitle();
@@ -67,7 +65,7 @@ public class BoardService {
                     }
                 }
             }
-            return new PostBoardRes(postId, postBoardReq.getUserId());
+            return new BoardRes(postId, postBoardReq.getUserId());
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -75,9 +73,9 @@ public class BoardService {
 
     //게시글 수정
     @Transactional(rollbackFor = Exception.class)
-    public void updateBoard(int userId, int postId, PatchBoardReq patchBoardReq) throws BaseException {
+    public void updateBoard(int postId, PatchBoardReq patchBoardReq) throws BaseException {
         try {
-            boardRepository.updateBoard(userId, postId, patchBoardReq);
+            boardRepository.updateBoard(postId, patchBoardReq);
 
             if (patchBoardReq.getImgFiles() != null) { //req에 수정할 imgFile 존재하면
                 List<String> arr = boardRepository.checkImg(postId); //기존 저장된 img 유무 확인
@@ -164,6 +162,35 @@ public class BoardService {
     public List<Board> getBoardList(int page, int size) throws BaseException {
         try {
             return boardRepository.getBoardList(page, size);
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    //좋아요
+    public BoardRes likeBoard(int userId, int postId) throws BaseException {
+        try {
+            boardRepository.likeBoard(userId, postId);
+            return new BoardRes(userId, postId);
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    //좋아요 취소
+    public BoardRes likeCancelBoard(int userId, int postId) throws BaseException {
+        try {
+            boardRepository.likeCancelBoard(userId, postId);
+            return new BoardRes(userId, postId);
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    //유저 수정, 삭제 권한 확인
+    public int checkAuth(int postId) throws BaseException {
+        try {
+            return boardRepository.checkAuth(postId);
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
