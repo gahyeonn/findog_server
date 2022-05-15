@@ -68,6 +68,9 @@ public enum BaseResponseStatus {
     //mypage/myInfo/nickname
     FAIL_MODIFY_NICKNAME(false, 3106, "닉네임 수정에 실패하였습니다."),
 
+    //mypage/myInfo/phoneNum
+    FAIL_MODIFY_PHONENUM(false, 3107, "연락처 수정에 실패하였습니다."),
+
     //mypage/{userIdx}
     FAIL_UPDATE_USER_INFO(false, 3200, "회원정보 수정에 실패하였습니다."),
 
