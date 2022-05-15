@@ -119,7 +119,22 @@ public class BoardRepository {
                 "left join (SELECT postId, Count(likeId) as likeCount FROM `Like` GROUP BY postId) L on L.postId = P.postId " +
                 "order by postId desc, postCreateAt desc " +
                 "limit ? offset ?";
-        return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Board.class), size, (page-1)*size);
+        return jdbcTemplate.query(query,
+                ((rs, rowNum) -> new Board(
+                        rs.getInt("postId"),
+                        rs.getInt("userId"),
+                        rs.getString("nickname"),
+                        rs.getString("profileUrl"),
+                        rs.getString("title"),
+                        rs.getInt("category"),
+                        rs.getInt("region"),
+                        rs.getString("thumbnail"),
+                        rs.getString("content"),
+                        rs.getTimestamp("postCreateAt"),
+                        rs.getInt("likeCount"),
+                        rs.getInt("commentCount"),
+                        rs.getInt("hits")
+                )), size, (page-1)*size);
     }
 
     //총 게시글 수 조회
