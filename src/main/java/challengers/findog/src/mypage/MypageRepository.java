@@ -1,5 +1,6 @@
 package challengers.findog.src.mypage;
 
+import challengers.findog.src.mypage.model.PatchNicknameReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -15,5 +16,9 @@ public class MypageRepository {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-
+    public int modifyNickname(PatchNicknameReq patchNicknameReq, int userId){
+        String query = "update User set nickname = ? where userId = ?";
+        Object[] params = new Object[]{patchNicknameReq.getNickname(), userId};
+        return jdbcTemplate.update(query, params);
+    }
 }

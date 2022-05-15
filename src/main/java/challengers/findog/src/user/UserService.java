@@ -99,10 +99,10 @@ public class UserService {
 
         try{
             if(userRepository.leaveUser(userid) == 0){
-                throw new BaseException(FAILE_LEAVEUSER);
+                throw new BaseException(FAIL_LEAVEUSER);
             }
         } catch (Exception e){
-            throw new BaseException(FAILE_LEAVEUSER);
+            throw new BaseException(FAIL_LEAVEUSER);
         }
 
         return "회원 탈퇴가 성공적으로 완료되었습니다.";
