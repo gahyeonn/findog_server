@@ -3,6 +3,7 @@ package challengers.findog.src.mypage;
 import challengers.findog.config.BaseException;
 import challengers.findog.config.BaseResponse;
 import challengers.findog.config.BaseResponseStatus;
+import challengers.findog.src.mypage.model.GetCheckUserReq;
 import challengers.findog.src.mypage.model.PatchNicknameReq;
 import challengers.findog.src.mypage.model.PatchPasswordReq;
 import challengers.findog.src.mypage.model.PatchPhoneNumReq;
@@ -12,6 +13,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import static challengers.findog.config.BaseResponseStatus.EMPTY_EMAIL;
+import static challengers.findog.config.BaseResponseStatus.EMPTY_PASSWORD;
 
 @RestController
 @RequiredArgsConstructor
@@ -83,4 +87,23 @@ public class MypageController {
         }
     }
 
+    /**
+     * 비밀번호 수정 전 유저 확인 API
+     * @param getCheckUserReq
+     * @return
+     */
+    @GetMapping("/myInfo/checkUser")
+    public BaseResponse<String> checkUserForPassword(@Valid @RequestBody GetCheckUserReq getCheckUserReq, BindingResult br){
+        if(br.hasErrors()){
+            String error = br.getAllErrors().get(0).getDefaultMessage();
+            return new BaseResponse<>(BaseResponseStatus.of(error));
+        }
+
+        try{
+            int userId = jwtService.getUserIdx();
+            return new BaseResponse<>(mypageService.checkLogInInfo(getCheckUserReq, userId));
+        } catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
 }

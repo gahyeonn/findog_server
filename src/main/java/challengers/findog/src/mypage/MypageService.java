@@ -3,6 +3,7 @@ package challengers.findog.src.mypage;
 import challengers.findog.config.BaseException;
 import challengers.findog.config.secret.Secret;
 import challengers.findog.src.mypage.model.*;
+import challengers.findog.src.user.UserRepository;
 import challengers.findog.src.user.model.User;
 import challengers.findog.utils.AES128;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import static challengers.findog.config.BaseResponseStatus.*;
 @Service
 public class MypageService {
     private final MypageRepository mypageRepository;
+    private final UserRepository userRepository;
 
     //닉네임 수정
     public String modifyNickname(PatchNicknameReq patchNicknameReq, int userId) throws BaseException{
@@ -67,5 +69,23 @@ public class MypageService {
             throw new BaseException(FAIL_MODIFY_PASSWORD);
         }
         return "비밀번호를 성공적으로 수정하였습니다.";
+    }
+
+    //비밀번호 수정 전 유저 정보 확인
+    public String checkLogInInfo(GetCheckUserReq getCheckUserReq, int userId) throws BaseException{
+        User user;
+        String pwd;
+        try{
+            user = userRepository.getUser(userId);
+            pwd = new AES128(Secret.USER_INFO_PASSWORD_KEY).decrypt(user.getPassword());
+        } catch (Exception e){
+            throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
+        }
+
+        if(!(user.getEmail().equals(getCheckUserReq.getEmail()) && pwd.equals(getCheckUserReq.getPassword()))){
+            throw new BaseException(NOT_EXISTS_USER);
+        }
+
+        return "일치하는 회원 정보입니다.";
     }
 }
