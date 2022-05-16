@@ -58,7 +58,7 @@ public class CommentService {
     public List<GetCommentRes> modifyComment(Comment comment) throws BaseException{
         try{
             if(commentRepository.modifyComment(comment) == 0){
-                throw new BaseException(FAILE_MODIFY_COMMENT);
+                throw new BaseException(FAIL_MODIFY_COMMENT);
             }
 
             return getCommentList(comment.getPostId());
@@ -72,12 +72,12 @@ public class CommentService {
         try{
             if(commentRepository.checkParentComment(deleteCommentRes.getCommentId()) == 0){
                 if(commentRepository.deleteComment(deleteCommentRes.getCommentId()) == 0){
-                    throw new BaseException(FAILE_DELETE_COMMENT);
+                    throw new BaseException(FAIL_DELETE_COMMENT);
                 }
             }
             else{
                 if(commentRepository.deleteParentComment(deleteCommentRes.getCommentId()) == 0){
-                    throw new BaseException(FAILE_DELETE_COMMENT);
+                    throw new BaseException(FAIL_DELETE_COMMENT);
                 }
             }
 
