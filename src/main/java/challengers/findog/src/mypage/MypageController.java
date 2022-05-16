@@ -3,10 +3,7 @@ package challengers.findog.src.mypage;
 import challengers.findog.config.BaseException;
 import challengers.findog.config.BaseResponse;
 import challengers.findog.config.BaseResponseStatus;
-import challengers.findog.src.mypage.model.GetCheckUserReq;
-import challengers.findog.src.mypage.model.PatchNicknameReq;
-import challengers.findog.src.mypage.model.PatchPasswordReq;
-import challengers.findog.src.mypage.model.PatchPhoneNumReq;
+import challengers.findog.src.mypage.model.*;
 import challengers.findog.utils.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
@@ -102,6 +99,21 @@ public class MypageController {
         try{
             int userId = jwtService.getUserIdx();
             return new BaseResponse<>(mypageService.checkLogInInfo(getCheckUserReq, userId));
+        } catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /**
+     * 프로필 이미지 수정 API
+     * @param patchProfileImgReq
+     * @return
+     */
+    @PatchMapping("/myInfo/profileImg")
+    public BaseResponse<String> modifyProfileImg(@ModelAttribute PatchProfileImgReq patchProfileImgReq) {
+        try{
+            int userId = jwtService.getUserIdx();
+            return new BaseResponse<>(mypageService.modifyProfileImg(patchProfileImgReq, userId));
         } catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }
