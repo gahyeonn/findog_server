@@ -74,6 +74,10 @@ public enum BaseResponseStatus {
     //mypage/myInfo/password
     FAIL_MODIFY_PASSWORD(false, 3108, "비밀번호 수정에 실패하였습니다."),
 
+    //mypage/myInfo/password
+    FAIL_DELETE_PROFILEIMG(false, 3109, "프로필 사진 삭제에 실패하였습니다."),
+    FAIL_MODIFY_PROFILEIMG(false, 3110, "프로필 사진 수정에 실패하였습니다."),
+
     //mypage/{userIdx}
     FAIL_UPDATE_USER_INFO(false, 3200, "회원정보 수정에 실패하였습니다."),
 
