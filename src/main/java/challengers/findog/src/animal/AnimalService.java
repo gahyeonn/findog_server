@@ -56,8 +56,9 @@ public class AnimalService {
                 String careNm		= (String) data.get("careNm").toString();
                 String careTel		= (String) data.get("careTel").toString();
                 String careAddr		= (String) data.get("careAddr").toString();
+                String orgNm        = (String) data.get("orgNm").toString();
 
-                Animal animal = new Animal(0, desertionNo, filename, happenDt, happenPlace, kindCd, colorCd, age, weight, noticeNo, noticeSdt, noticeEdt, popfile, processState, sexCd, neuterYn, specialMark, careNm, careTel, careAddr);
+                Animal animal = new Animal(0, desertionNo, filename, happenDt, happenPlace, kindCd, colorCd, age, weight, noticeNo, noticeSdt, noticeEdt, popfile, processState, sexCd, neuterYn, specialMark, careNm, careTel, careAddr, orgNm);
                 animalRepository.createAnimal(animal);
             }
 

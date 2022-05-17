@@ -21,7 +21,7 @@ public class AnimalRepository {
 
     //유기동물 공고 저장
     public int createAnimal(Animal animal){
-        String query = "insert into Animal(desertionNo, filename, happenDt, happenPlace, kindCd, colorCd, age, weight, noticeNo, noticeSdt, noticeEdt, popfile, processState, sexCd, neuterYn, specialMark, careNm, careTel, careAddr) value(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        String query = "insert into Animal(desertionNo, filename, happenDt, happenPlace, kindCd, colorCd, age, weight, noticeNo, noticeSdt, noticeEdt, popfile, processState, sexCd, neuterYn, specialMark, careNm, careTel, careAddr, orgNm) value(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, ?)";
         Object[] params = new Object[]{
                 animal.getDesertionNo(),
                 animal.getFilename(),
@@ -41,7 +41,8 @@ public class AnimalRepository {
                 animal.getSpecialMark(),
                 animal.getCareNm(),
                 animal.getCareTel(),
-                animal.getCareAddr()
+                animal.getCareAddr(),
+                animal.getOrgNm()
         };
         return jdbcTemplate.update(query, params);
     }
