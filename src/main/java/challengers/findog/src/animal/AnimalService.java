@@ -140,4 +140,17 @@ public class AnimalService {
         return "해당 유기동물 공고 관심 내역이 삭제되었습니다.";
     }
 
+    //관심 유기동물 공고 조회
+    public GetAnimalListRes getLikeAnimalPostList(int userId, int page, int size) throws BaseException{
+        try{
+            List<AnimalSimpleDto> animalList = animalRepository.getLikeAnimalPostList(userId, page, size);
+            int totalCount = animalRepository.getLikeAnimalPostTotalCount(userId);
+            int totalPage = (totalCount % size != 0) ? totalCount / size + 1 : totalCount / size;
+
+            PageCriteriaDto pageCriteriaDto = new PageCriteriaDto(totalCount, totalPage, page, size);
+            return new GetAnimalListRes(pageCriteriaDto, animalList);
+        } catch (Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }

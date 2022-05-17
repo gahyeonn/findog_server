@@ -103,4 +103,30 @@ public class AnimalRepository {
         return jdbcTemplate.update(query, userId);
     }
 
+    //관심 유기동물 공고 조회
+    public List<AnimalSimpleDto> getLikeAnimalPostList(int userId, int page, int size) {
+        String query = "select * from Animal natural join (select animalId, if(userId > 0 , 1, 0) as likeFlag, likeCreateAt from `Like` where userId = ?) T " +
+                "order by likeCreateAt desc, desertionNo desc limit ? offset ?";
+        Object[] params = new Object[]{userId, size, (page - 1) * size};
+        return jdbcTemplate.query(query,
+                (rs, rowNum) -> new AnimalSimpleDto(
+                        rs.getInt("animalId"),
+                        rs.getString("processState"),
+                        rs.getString("sexCd"),
+                        rs.getString("neuterYn"),
+                        rs.getString("kindCd"),
+                        rs.getString("happenDt"),
+                        rs.getString("orgNm"),
+                        rs.getString("happenPlace"),
+                        rs.getString("popfile"),
+                        rs.getInt("likeFlag")
+                ), params);
+    }
+
+    //관심 유기동물 공고 개수
+    public int getLikeAnimalPostTotalCount(int userId){
+        String query = "select count(desertionNo) from Animal natural join (select * from `Like` where userId = ?) T";
+        return jdbcTemplate.queryForObject(query, int.class, userId);
+    }
+
 }

@@ -78,4 +78,20 @@ public class AnimalController {
         }
     }
 
+    /**
+     * 관심있는 공고
+     * @param page
+     * @param size
+     * @return
+     */
+    @GetMapping("/mypage")
+    public BaseResponse<GetAnimalListRes> getLikeAnimalList(@RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value = "size", defaultValue = "6") int size){
+        try{
+            int userId = jwtService.getUserIdx();
+            return new BaseResponse<>(animalService.getLikeAnimalPostList(userId, page, size));
+        } catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
 }
