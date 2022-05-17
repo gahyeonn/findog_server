@@ -1,11 +1,9 @@
 package challengers.findog.src.animal;
 
 import challengers.findog.config.BaseException;
-import challengers.findog.src.animal.model.Animal;
-import challengers.findog.src.animal.model.AnimalSimpleDto;
-import challengers.findog.src.animal.model.GetAnimalListRes;
-import challengers.findog.src.animal.model.PageCriteriaDto;
+import challengers.findog.src.animal.model.*;
 import challengers.findog.utils.JwtService;
+import com.fasterxml.jackson.databind.ser.Serializers;
 import com.nimbusds.jose.shaded.json.JSONArray;
 import com.nimbusds.jose.shaded.json.JSONObject;
 import com.nimbusds.jose.shaded.json.parser.JSONParser;
@@ -124,6 +122,22 @@ public class AnimalService {
             throw new BaseException(FAIL_UPLOAD_LIKEANIMAL);
         }
         return "해당 유기동물 공고가 관심 등록되었습니다.";
+    }
+
+    //유기동물 공고 관심 해제
+    public String unlikeAnimalPost(DeleteUnlikeAnimalReq deleteUnlikeAnimalReq, int userId) throws BaseException {
+        int result;
+        try{
+            String animalIdList = deleteUnlikeAnimalReq.getAnimalIdList().toString();
+            animalIdList = animalIdList.substring(1, animalIdList.length()-1);
+            result = animalRepository.unlikeAnimalPost(animalIdList, userId);
+        } catch (Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+        if(result == 0){
+            throw new BaseException(FAIL_DELETE_LIKEANIMAL);
+        }
+        return "해당 유기동물 공고 관심 내역이 삭제되었습니다.";
     }
 
 }
