@@ -88,4 +88,11 @@ public class AnimalRepository {
         Object[] params = new Object[]{userId, animalId};
         return jdbcTemplate.update(query, params);
     }
+
+    public int checkLikeAnimal(int animalId, int userId){
+        String query = "select exists (select animalId from `Like` where userId = ? and animalId = ?)";
+        Object[] params = new Object[]{userId, animalId};
+        return jdbcTemplate.queryForObject(query, int.class, params);
+    }
+
 }

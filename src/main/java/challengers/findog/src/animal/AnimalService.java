@@ -15,8 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static challengers.findog.config.BaseResponseStatus.DATABASE_ERROR;
-import static challengers.findog.config.BaseResponseStatus.FAIL_UPLOAD_LIKEANIMAL;
+import static challengers.findog.config.BaseResponseStatus.*;
 
 @RequiredArgsConstructor
 @Service
@@ -111,6 +110,10 @@ public class AnimalService {
     //유기동물 공고 관심 등록
     public String likeAnimalPost(int animalId, int userId) throws BaseException {
         int result;
+        if(animalRepository.checkLikeAnimal(animalId, userId) == 1){
+            throw new BaseException(DUPLICATED_LIKEANUMAL);
+        }
+
         try{
             result = animalRepository.likeAnimalPost(animalId, userId);
         } catch (Exception e){
