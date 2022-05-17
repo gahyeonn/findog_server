@@ -81,4 +81,11 @@ public class AnimalRepository {
         String query = "select * from Animal where animalId = ?";
         return jdbcTemplate.queryForObject(query, new BeanPropertyRowMapper<>(Animal.class), animalId);
     }
+
+    //유기동물 공고 관심 등록
+    public int likeAnimalPost(int animalId, int userId){
+        String query = "insert into `Like` (userId, animalId) values (?, ?)";
+        Object[] params = new Object[]{userId, animalId};
+        return jdbcTemplate.update(query, params);
+    }
 }
