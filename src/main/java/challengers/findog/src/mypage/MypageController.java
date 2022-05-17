@@ -139,4 +139,21 @@ public class MypageController {
             return new BaseResponse<>(e.getStatus());
         }
     }
+
+    /**
+     * 내가 좋아요한 글 조회 API
+     *
+     * @return boardList
+     */
+    @ApiOperation(value = "내가 좋아요한 글 조회", notes = "페이징 처리, (default)page=1, size=15")
+    @GetMapping("/like")
+    public BaseResponse<List<Board>> getMyLikeBoardList(@RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value="size", defaultValue = "15") int size){
+        try{
+            int userId = jwtService.getUserIdx();
+            List<Board> boardList = mypageService.getMyLikeBoardList(userId, page, size);
+            return new BaseResponse<>(boardList);
+        } catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
 }

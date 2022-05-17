@@ -82,4 +82,34 @@ public class MypageRepository {
                         rs.getInt("hits")
                 )), userId, size, (page-1)*size);
     }
+
+    //내가 좋아요한 글 조회
+    public List<Board> getMyLikeBoardList(int userId, int page, int size) {
+        String query = "select P.postId, P.userId, nickname, U.profileUrl, title, category, region, thumbnail, P.content, postCreateAt, count(likeId) as likeCount, commentCount, hits\n" +
+                "from Post P\n" +
+                "left join `Like` L on L.postId = P.postId\n" +
+                "left join User U on P.userId = U.userId\n" +
+                "left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId\n" +
+                "left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId\n" +
+                "where L.userId = ? and L.animalId is null\n" +
+                "group by P.postId\n" +
+                "order by P.postId desc\n" +
+                "limit ? offset ?";
+        return jdbcTemplate.query(query,
+                ((rs, rowNum) -> new Board(
+                        rs.getInt("postId"),
+                        rs.getInt("userId"),
+                        rs.getString("nickname"),
+                        rs.getString("profileUrl"),
+                        rs.getString("title"),
+                        rs.getInt("category"),
+                        rs.getInt("region"),
+                        rs.getString("thumbnail"),
+                        rs.getString("content"),
+                        rs.getTimestamp("postCreateAt"),
+                        rs.getInt("likeCount"),
+                        rs.getInt("commentCount"),
+                        rs.getInt("hits")
+                )), userId, size, (page-1)*size);
+    }
 }

@@ -138,4 +138,13 @@ public class MypageService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    //내가 좋아요한 글 조회
+    public List<Board> getMyLikeBoardList(int userId, int page, int size) throws BaseException {
+        try {
+            return mypageRepository.getMyLikeBoardList(userId, page, size);
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }
