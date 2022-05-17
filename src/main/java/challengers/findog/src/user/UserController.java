@@ -152,4 +152,14 @@ public class UserController {
         }
     }
 
+    @GetMapping("")
+    public BaseResponse<User> getUserInfo(){
+        try{
+            int userId = jwtService.getUserIdx();
+            return new BaseResponse<>(userService.getUserInfo(userId));
+        } catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
 }
