@@ -170,10 +170,10 @@ public class BoardService {
     }
 
     //좋아요
-    public BoardRes likeBoard(int userId, int postId) throws BaseException {
+    public BoardRes likeBoard(int postId, int userId) throws BaseException {
         try {
-            boardRepository.likeBoard(userId, postId);
-            return new BoardRes(userId, postId);
+            boardRepository.likeBoard(postId, userId);
+            return new BoardRes(postId, userId);
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -182,8 +182,8 @@ public class BoardService {
     //좋아요 취소
     public BoardRes likeCancelBoard(int userId, int postId) throws BaseException {
         try {
-            boardRepository.likeCancelBoard(userId, postId);
-            return new BoardRes(userId, postId);
+            boardRepository.likeCancelBoard(postId, userId);
+            return new BoardRes(postId, userId);
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

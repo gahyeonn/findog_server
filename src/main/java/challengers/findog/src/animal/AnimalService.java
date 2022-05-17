@@ -1,8 +1,11 @@
 package challengers.findog.src.animal;
 
 import challengers.findog.config.BaseException;
-import challengers.findog.config.BaseResponse;
 import challengers.findog.src.animal.model.Animal;
+import challengers.findog.src.animal.model.AnimalSimpleDto;
+import challengers.findog.src.animal.model.GetAnimalListRes;
+import challengers.findog.src.animal.model.PageCriteriaDto;
+import challengers.findog.utils.JwtService;
 import com.nimbusds.jose.shaded.json.JSONArray;
 import com.nimbusds.jose.shaded.json.JSONObject;
 import com.nimbusds.jose.shaded.json.parser.JSONParser;
@@ -10,11 +13,17 @@ import com.nimbusds.jose.shaded.json.parser.ParseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+import static challengers.findog.config.BaseResponseStatus.*;
+
 @RequiredArgsConstructor
 @Service
 public class AnimalService {
     private final AnimalRepository animalRepository;
+    private final JwtService jwtService;
 
+    //유기 동물 공고 디비 저장
     public String insertAnimalPost(StringBuilder sb) throws BaseException{
 
         try {
@@ -47,8 +56,9 @@ public class AnimalService {
                 String careNm		= (String) data.get("careNm").toString();
                 String careTel		= (String) data.get("careTel").toString();
                 String careAddr		= (String) data.get("careAddr").toString();
+                String orgNm        = (String) data.get("orgNm").toString();
 
-                Animal animal = new Animal(0, desertionNo, filename, happenDt, happenPlace, kindCd, colorCd, age, weight, noticeNo, noticeSdt, noticeEdt, popfile, processState, sexCd, neuterYn, specialMark, careNm, careTel, careAddr);
+                Animal animal = new Animal(0, desertionNo, filename, happenDt, happenPlace, kindCd, colorCd, age, weight, noticeNo, noticeSdt, noticeEdt, popfile, processState, sexCd, neuterYn, specialMark, careNm, careTel, careAddr, orgNm);
                 animalRepository.createAnimal(animal);
             }
 
@@ -59,6 +69,7 @@ public class AnimalService {
         return "불러온 유기동물 공고를 성공적으로 저장하였습니다.";
     }
 
+    //날짜 형식 변경
     private String changeDateForm(String date){
         StringBuffer sb = new StringBuffer();
 
@@ -67,4 +78,52 @@ public class AnimalService {
         sb.insert(7, "-");
         return sb.toString();
     }
+
+    //유기동물 공고 리스트 조회
+    public GetAnimalListRes getAnimalPostList(String jwt, int page, int size) throws BaseException{
+        try{
+            int userId = 0;
+            if(jwt != null && jwt.length() != 0) {
+                userId = jwtService.getUserIdx();
+            }
+
+            List<AnimalSimpleDto> animalList = animalRepository.getAnimalPostList(userId, page, size);
+            int totalCount = animalRepository.getAnimalPostTotalCount();
+            int totalPage = (totalCount % size != 0) ? totalCount / size + 1 : totalCount / size;
+
+            PageCriteriaDto pageCriteriaDto = new PageCriteriaDto(totalCount, totalPage, page, size);
+            return new GetAnimalListRes(pageCriteriaDto, animalList);
+        } catch (Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    //유기동물 공고 상세 조회
+    public Animal getAnimalPost(int animalId) throws BaseException{
+        try{
+            return animalRepository.getAnimalPost(animalId);
+        } catch (Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    //유기동물 공고 관심 등록
+    public String likeAnimalPost(int animalId, int userId) throws BaseException {
+        int result;
+        if(animalRepository.checkLikeAnimal(animalId, userId) == 1){
+            throw new BaseException(DUPLICATED_LIKEANUMAL);
+        }
+
+        try{
+            result = animalRepository.likeAnimalPost(animalId, userId);
+        } catch (Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+
+        if(result == 0){
+            throw new BaseException(FAIL_UPLOAD_LIKEANIMAL);
+        }
+        return "해당 유기동물 공고가 관심 등록되었습니다.";
+    }
+
 }

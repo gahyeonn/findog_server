@@ -44,6 +44,7 @@ public enum BaseResponseStatus {
     INVALID_POSTID(false, 2110, "올바르지 않은 postId입니다."),
     EMPTY_COMMENT(false, 2111, "댓글 내용을 입력해주세요."),
 
+
     /**
      * 3000 : Response 오류
      */
@@ -78,11 +79,15 @@ public enum BaseResponseStatus {
     FAIL_DELETE_PROFILEIMG(false, 3109, "프로필 사진 삭제에 실패하였습니다."),
     FAIL_MODIFY_PROFILEIMG(false, 3110, "프로필 사진 수정에 실패하였습니다."),
 
+    //users/:userId
+    INVALID_USERID(false, 3111, "유저 정보가 올바르지 않습니다."),
+
+    //animal
+    FAIL_UPLOAD_LIKEANIMAL(false, 3112, "유기동물 공고 관심 등록에 실패하였습니다."),
+    DUPLICATED_LIKEANUMAL(false, 3113, "이미 관심 등록된 유기동물 공고입니다."),
+
     //mypage/{userIdx}
     FAIL_UPDATE_USER_INFO(false, 3200, "회원정보 수정에 실패하였습니다."),
-
-    //users/:userId
-    INVALID_USERID(false, 3201, "유저 정보가 올바르지 않습니다."),
 
     //boards
     FAIL_UPLOAD_IMAGES(false, 3201, "사진 업로드에 실패하였습니다."),
