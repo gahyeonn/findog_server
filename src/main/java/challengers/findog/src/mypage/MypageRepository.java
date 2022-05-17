@@ -1,5 +1,6 @@
 package challengers.findog.src.mypage;
 
+import challengers.findog.src.board.model.Board;
 import challengers.findog.src.mypage.model.PatchNicknameReq;
 import challengers.findog.src.mypage.model.PatchPasswordReq;
 import challengers.findog.src.mypage.model.PatchPhoneNumReq;
@@ -9,6 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 @Repository
 public class MypageRepository {
@@ -51,5 +53,33 @@ public class MypageRepository {
         String query = "update User set profileUrl = ? where userId = ?";
         Object[] params = new Object[]{profileImgUrl, userId};
         return jdbcTemplate.update(query, params);
+    }
+
+    //내가 작성한 글 조회
+    public List<Board> getMyWriteBoardList(int userId, int page, int size) {
+        String query = "select P.postId, P.userId, nickname, U.profileUrl, title, category, region, thumbnail, P.content, postCreateAt, likeCount, commentCount, hits\n" +
+                "from Post P left join User U on P.userId = U.userId\n" +
+                "            left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId\n" +
+                "            left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId\n" +
+                "            left join (SELECT postId, Count(likeId) as likeCount FROM `Like` GROUP BY postId) L on L.postId = P.postId\n" +
+                "where P.userId = ?\n" +
+                "order by postId desc, postCreateAt desc\n" +
+                "limit ? offset ?";
+        return jdbcTemplate.query(query,
+                ((rs, rowNum) -> new Board(
+                        rs.getInt("postId"),
+                        rs.getInt("userId"),
+                        rs.getString("nickname"),
+                        rs.getString("profileUrl"),
+                        rs.getString("title"),
+                        rs.getInt("category"),
+                        rs.getInt("region"),
+                        rs.getString("thumbnail"),
+                        rs.getString("content"),
+                        rs.getTimestamp("postCreateAt"),
+                        rs.getInt("likeCount"),
+                        rs.getInt("commentCount"),
+                        rs.getInt("hits")
+                )), userId, size, (page-1)*size);
     }
 }

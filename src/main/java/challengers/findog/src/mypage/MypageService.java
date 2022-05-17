@@ -2,6 +2,7 @@ package challengers.findog.src.mypage;
 
 import challengers.findog.config.BaseException;
 import challengers.findog.config.secret.Secret;
+import challengers.findog.src.board.model.Board;
 import challengers.findog.src.mypage.model.*;
 import challengers.findog.src.user.UserRepository;
 import challengers.findog.src.user.model.User;
@@ -9,6 +10,8 @@ import challengers.findog.utils.AES128;
 import challengers.findog.utils.s3Component.FileControlService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 import static challengers.findog.config.BaseResponseStatus.*;
 import static challengers.findog.utils.ValidationRegex.isRegexImage;
@@ -125,5 +128,14 @@ public class MypageService {
         }
 
         return "프로필 사진을 성공적으로 수정하였습니다.";
+    }
+
+    //내가 작성한 글 조회
+    public List<Board> getMyWriteBoardList(int userId, int page, int size) throws BaseException {
+        try {
+            return mypageRepository.getMyWriteBoardList(userId, page, size);
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
     }
 }

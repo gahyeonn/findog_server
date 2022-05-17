@@ -157,7 +157,7 @@ public class BoardController {
         try {
             int userId = jwtService.getUserIdx();
             //게시글 삭제
-            BoardRes boardRes = boardService.likeBoard(userId, likeBoardReq.getPostId());
+            BoardRes boardRes = boardService.likeBoard(likeBoardReq.getPostId(), userId);
             return new BaseResponse<>(boardRes);
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
