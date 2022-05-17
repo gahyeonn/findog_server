@@ -3,6 +3,7 @@ package challengers.findog.src.animal;
 import challengers.findog.config.BaseException;
 import challengers.findog.config.BaseResponse;
 import challengers.findog.src.animal.model.Animal;
+import challengers.findog.src.animal.model.DeleteUnlikeAnimalReq;
 import challengers.findog.src.animal.model.GetAnimalListRes;
 import challengers.findog.src.animal.model.PageCriteriaDto;
 import challengers.findog.utils.JwtService;
@@ -61,4 +62,20 @@ public class AnimalController {
             return new BaseResponse<>(e.getStatus());
         }
     }
+
+    /**
+     * 유기동물 공고 관심 해제 API
+     * @param deleteUnlikeAnimalReq
+     * @return
+     */
+    @DeleteMapping("/unlike")
+    public BaseResponse<String> unlikeAnimalPost(@RequestBody DeleteUnlikeAnimalReq deleteUnlikeAnimalReq) {
+        try{
+            int userId = jwtService.getUserIdx();
+            return new BaseResponse<>(animalService.unlikeAnimalPost(deleteUnlikeAnimalReq, userId));
+        } catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
 }
