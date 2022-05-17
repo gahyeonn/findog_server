@@ -46,4 +46,19 @@ public class AnimalController {
             return new BaseResponse<>(e.getStatus());
         }
     }
+
+    /**
+     * 유기동물 공고 관심 등록 API
+     * @param animalId
+     * @return
+     */
+    @PostMapping("/like")
+    public BaseResponse<String> likeAnimalPost(@RequestParam("animalId") int animalId) {
+        try{
+            int userId = jwtService.getUserIdx();
+            return new BaseResponse<>(animalService.likeAnimalPost(animalId, userId));
+        } catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
 }
