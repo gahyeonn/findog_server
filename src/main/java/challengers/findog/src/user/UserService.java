@@ -145,4 +145,14 @@ public class UserService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    //유저 정보 조회
+    public GetUserRes getUserInfo(int userId) throws BaseException{
+        try{
+            User user = userRepository.getUser(userId);
+            return GetUserRes.from(user);
+        } catch (Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }
