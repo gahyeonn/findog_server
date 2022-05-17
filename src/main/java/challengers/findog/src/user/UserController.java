@@ -153,7 +153,7 @@ public class UserController {
     }
 
     @GetMapping("")
-    public BaseResponse<User> getUserInfo(){
+    public BaseResponse<GetUserRes> getUserInfo(){
         try{
             int userId = jwtService.getUserIdx();
             return new BaseResponse<>(userService.getUserInfo(userId));
@@ -161,5 +161,4 @@ public class UserController {
             return new BaseResponse<>(e.getStatus());
         }
     }
-
 }

@@ -147,9 +147,10 @@ public class UserService {
     }
 
     //유저 정보 조회
-    public User getUserInfo(int userId) throws BaseException{
+    public GetUserRes getUserInfo(int userId) throws BaseException{
         try{
-            return userRepository.getUser(userId);
+            User user = userRepository.getUser(userId);
+            return GetUserRes.from(user);
         } catch (Exception e){
             throw new BaseException(DATABASE_ERROR);
         }
