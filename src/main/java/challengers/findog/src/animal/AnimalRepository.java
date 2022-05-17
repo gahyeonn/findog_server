@@ -55,12 +55,13 @@ public class AnimalRepository {
         Object[] params = new Object[]{userId, size, (page - 1) * size};
         return jdbcTemplate.query(query,
                 (rs, rowNum) -> new AnimalSimpleDto(
+                        rs.getInt("animalId"),
                         rs.getString("processState"),
                         rs.getString("sexCd"),
                         rs.getString("neuterYn"),
                         rs.getString("kindCd"),
                         rs.getString("happenDt"),
-                        rs.getString("careNm"),
+                        rs.getString("orgNm"),
                         rs.getString("happenPlace"),
                         rs.getString("popfile"),
                         rs.getInt("likeFlag")
