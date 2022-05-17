@@ -152,10 +152,13 @@ public class UserController {
         }
     }
 
-    @GetMapping("")
-    public BaseResponse<GetUserRes> getUserInfo(){
+    @GetMapping("/{userId}")
+    public BaseResponse<GetUserRes> getUserInfo(@PathVariable("userId") int userId){
         try{
-            int userId = jwtService.getUserIdx();
+            int userIdByIdx = jwtService.getUserIdx();
+            if(userIdByIdx != userId){
+                throw new BaseException(INVALID_USERID);
+            }
             return new BaseResponse<>(userService.getUserInfo(userId));
         } catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
