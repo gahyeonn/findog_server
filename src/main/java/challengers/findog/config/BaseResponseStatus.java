@@ -81,6 +81,9 @@ public enum BaseResponseStatus {
     //mypage/{userIdx}
     FAIL_UPDATE_USER_INFO(false, 3200, "회원정보 수정에 실패하였습니다."),
 
+    //users/:userId
+    INVALID_USERID(false, 3201, "유저 정보가 올바르지 않습니다."),
+
     //boards
     FAIL_UPLOAD_IMAGES(false, 3201, "사진 업로드에 실패하였습니다."),
     FAIL_UPDATE_BOARD(false, 3202, "게시글 수정에 실패하였습니다."),
