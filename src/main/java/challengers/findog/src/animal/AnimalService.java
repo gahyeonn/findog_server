@@ -1,8 +1,11 @@
 package challengers.findog.src.animal;
 
 import challengers.findog.config.BaseException;
-import challengers.findog.config.BaseResponse;
 import challengers.findog.src.animal.model.Animal;
+import challengers.findog.src.animal.model.AnimalSimpleDto;
+import challengers.findog.src.animal.model.GetAnimalListRes;
+import challengers.findog.src.animal.model.PageCriteriaDto;
+import challengers.findog.utils.JwtService;
 import com.nimbusds.jose.shaded.json.JSONArray;
 import com.nimbusds.jose.shaded.json.JSONObject;
 import com.nimbusds.jose.shaded.json.parser.JSONParser;
@@ -10,11 +13,17 @@ import com.nimbusds.jose.shaded.json.parser.ParseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+import static challengers.findog.config.BaseResponseStatus.DATABASE_ERROR;
+
 @RequiredArgsConstructor
 @Service
 public class AnimalService {
     private final AnimalRepository animalRepository;
+    private final JwtService jwtService;
 
+    //유기 동물 공고 디비 저장
     public String insertAnimalPost(StringBuilder sb) throws BaseException{
 
         try {
@@ -59,6 +68,7 @@ public class AnimalService {
         return "불러온 유기동물 공고를 성공적으로 저장하였습니다.";
     }
 
+    //날짜 형식 변경
     private String changeDateForm(String date){
         StringBuffer sb = new StringBuffer();
 
@@ -67,4 +77,24 @@ public class AnimalService {
         sb.insert(7, "-");
         return sb.toString();
     }
+
+    //유기동물 공고 리스트 조회
+    public GetAnimalListRes getAnimalPostList(String jwt, int page, int size) throws BaseException{
+        try{
+            int userId = 0;
+            if(jwt != null && jwt.length() != 0) {
+                userId = jwtService.getUserIdx();
+            }
+
+            List<AnimalSimpleDto> animalList = animalRepository.getAnimalPostList(userId, page, size);
+            int totalCount = animalRepository.getAnimalPostTotalCount();
+            int totalPage = (totalCount % size != 0) ? totalCount / size + 1 : totalCount / size;
+
+            PageCriteriaDto pageCriteriaDto = new PageCriteriaDto(totalCount, totalPage, page, size);
+            return new GetAnimalListRes(pageCriteriaDto, animalList);
+        } catch (Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
 }
