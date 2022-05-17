@@ -3,13 +3,17 @@ package challengers.findog.src.mypage;
 import challengers.findog.config.BaseException;
 import challengers.findog.config.BaseResponse;
 import challengers.findog.config.BaseResponseStatus;
+import challengers.findog.src.board.model.Board;
 import challengers.findog.src.mypage.model.*;
 import challengers.findog.utils.JwtService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import java.util.List;
 
 import static challengers.findog.config.BaseResponseStatus.EMPTY_EMAIL;
 import static challengers.findog.config.BaseResponseStatus.EMPTY_PASSWORD;
@@ -114,6 +118,40 @@ public class MypageController {
         try{
             int userId = jwtService.getUserIdx();
             return new BaseResponse<>(mypageService.modifyProfileImg(patchProfileImgReq, userId));
+        } catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /**
+     * 내가 작성한 글 조회 API
+     *
+     * @return boardList
+     */
+    @ApiOperation(value = "내가 작성한 글 조회", notes = "페이징 처리, (default)page=1, size=15")
+    @GetMapping("/board")
+    public BaseResponse<List<Board>> getMyWriteBoardList(@RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value="size", defaultValue = "15") int size){
+        try{
+            int userId = jwtService.getUserIdx();
+            List<Board> boardList = mypageService.getMyWriteBoardList(userId, page, size);
+            return new BaseResponse<>(boardList);
+        } catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /**
+     * 내가 좋아요한 글 조회 API
+     *
+     * @return boardList
+     */
+    @ApiOperation(value = "내가 좋아요한 글 조회", notes = "페이징 처리, (default)page=1, size=15")
+    @GetMapping("/like")
+    public BaseResponse<List<Board>> getMyLikeBoardList(@RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value="size", defaultValue = "15") int size){
+        try{
+            int userId = jwtService.getUserIdx();
+            List<Board> boardList = mypageService.getMyLikeBoardList(userId, page, size);
+            return new BaseResponse<>(boardList);
         } catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }
