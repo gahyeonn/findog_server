@@ -2,10 +2,8 @@ package challengers.findog.src.comment;
 
 import challengers.findog.config.BaseException;
 import challengers.findog.config.BaseResponseStatus;
-import challengers.findog.src.comment.model.Comment;
-import challengers.findog.src.comment.model.DeleteCommentRes;
-import challengers.findog.src.comment.model.GetCommentRes;
-import challengers.findog.src.comment.model.PostCommentReq;
+import challengers.findog.src.animal.model.PageCriteriaDto;
+import challengers.findog.src.comment.model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,6 +80,20 @@ public class CommentService {
             }
 
             return getCommentList(postId);
+        } catch (Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    //내가 작성한 댓글 조회
+    public GetMyCommentsRes getMyCommentList(int userId, int page, int size) throws BaseException {
+        try{
+            List<MyCommentDto> commentList = commentRepository.getMyCommentList(userId, page, size);
+            int totalCount = commentRepository.getMyCommentTotalCount(userId);
+            int totalPage = (totalCount % size != 0) ? totalCount / size + 1 : totalCount / size;
+
+            PageCriteriaDto pageCriteriaDto = new PageCriteriaDto(totalCount, totalPage, page, size);
+            return new GetMyCommentsRes(pageCriteriaDto, commentList);
         } catch (Exception e){
             throw new BaseException(DATABASE_ERROR);
         }
