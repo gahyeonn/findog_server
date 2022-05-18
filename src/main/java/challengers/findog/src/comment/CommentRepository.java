@@ -1,9 +1,6 @@
 package challengers.findog.src.comment;
 
-import challengers.findog.src.comment.model.Comment;
-import challengers.findog.src.comment.model.DeleteCommentRes;
-import challengers.findog.src.comment.model.GetCommentRes;
-import challengers.findog.src.comment.model.PostCommentReq;
+import challengers.findog.src.comment.model.*;
 import challengers.findog.src.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,5 +66,30 @@ public class CommentRepository {
     public int checkParentComment(int commentId){
         String query = "select exists (select commentId from Comment where parentCommentId = ?)";
         return this.jdbcTemplate.queryForObject(query, int.class, commentId);
+    }
+
+    //내가 작성한 댓글 조회
+    public List<MyCommentDto> getMyCommentList(int userId, int page, int size){
+        String query = "select * from" +
+                "(select commentId, content, postId, DATE_FORMAT(commentUpdateAt, '%Y.%m.%d') as date from Comment where userId = ?) C " +
+                "join (select postId, title from Post) P using(postId)" +
+                "natural join (select postId, count(commentId) as postCommentCount from Comment group by postId) C2 " +
+                "order by date desc limit ? offset ?";
+        Object[] params = new Object[]{userId, size, (page - 1) * size};
+        return jdbcTemplate.query(query,
+                (rs, rowNum) -> new MyCommentDto(
+                        rs.getInt("commentId"),
+                        rs.getString("Content"),
+                        rs.getString("date"),
+                        rs.getInt("postId"),
+                        rs.getInt("postCommentCount"),
+                        rs.getString("title")
+                ), params);
+    }
+
+    //내가 작성한 댓글 개수 조회
+    public int getMyCommentTotalCount(int userId) {
+        String query = "select count(*) from Comment where userId = ?";
+        return jdbcTemplate.queryForObject(query, int.class, userId);
     }
 }

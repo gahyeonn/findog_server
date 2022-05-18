@@ -3,11 +3,9 @@ package challengers.findog.src.comment;
 import challengers.findog.config.BaseException;
 import challengers.findog.config.BaseResponse;
 import challengers.findog.config.BaseResponseStatus;
-import challengers.findog.src.comment.model.Comment;
-import challengers.findog.src.comment.model.DeleteCommentRes;
-import challengers.findog.src.comment.model.GetCommentRes;
-import challengers.findog.src.comment.model.PostCommentReq;
+import challengers.findog.src.comment.model.*;
 import challengers.findog.utils.JwtService;
+import com.fasterxml.jackson.databind.ser.Serializers;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiKeyAuthDefinition;
@@ -112,6 +110,20 @@ public class CommentController {
             return new BaseResponse<>(commentList);
 
         } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /**
+     * 내가 쓴 댓글 조회 API
+     * @return
+     */
+    @GetMapping("/mypage")
+    public BaseResponse<GetMyCommentsRes> getMyCommentList(@RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value = "size", defaultValue = "8") int size){
+        try{
+            int userId = jwtService.getUserIdx();
+            return new BaseResponse<>(commentService.getMyCommentList(userId, page, size));
+        } catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }
     }
