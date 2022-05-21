@@ -149,7 +149,8 @@ public class MypageController {
     @GetMapping("/board/count")
     public BaseResponse<Integer> getMyWriteBoardCount(){
         try{
-            return new BaseResponse<>(mypageService.getMyWriteBoardCount());
+            int userId = jwtService.getUserIdx();
+            return new BaseResponse<>(mypageService.getMyWriteBoardCount(userId));
         } catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }
@@ -181,7 +182,8 @@ public class MypageController {
     @GetMapping("/like/count")
     public BaseResponse<Integer> getMyLikeBoardCount(){
         try{
-            return new BaseResponse<>(mypageService.getMyLikeBoardCount());
+            int userId = jwtService.getUserIdx();
+            return new BaseResponse<>(mypageService.getMyLikeBoardCount(userId));
         } catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }

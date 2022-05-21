@@ -161,9 +161,9 @@ public class BoardService {
         }
     }
 
-    public int getBoardCount() throws BaseException {
+    public int getBoardCount(String keyword) throws BaseException {
         try {
-            return boardRepository.getBoardCount();
+            return boardRepository.getBoardCount(keyword);
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
