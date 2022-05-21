@@ -161,14 +161,6 @@ public class BoardService {
         }
     }
 
-    public int getBoardCount(String keyword) throws BaseException {
-        try {
-            return boardRepository.getBoardCount(keyword);
-        } catch (Exception e) {
-            throw new BaseException(DATABASE_ERROR);
-        }
-    }
-
     //좋아요
     public BoardRes likeBoard(int postId, int userId) throws BaseException {
         try {
@@ -198,10 +190,75 @@ public class BoardService {
         }
     }
 
-    //키워드 검색
-    public List<Board> searchBoard(String keyword, int page, int size) throws BaseException {
+    /** 게시글 검색 **/
+    //지역x, 카테고리x
+    public List<Board> searchBoard(String keyword, String start_period, String end_period, int sort, int page, int size) throws BaseException {
         try {
-            return boardRepository.searchBoard(keyword, page, size);
+            return boardRepository.searchBoard(keyword, start_period, end_period, sort, page, size);
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    //지역o, 카테고리x
+    public List<Board> searchBoardRegion(String keyword, int region, String start_period, String end_period, int sort, int page, int size) throws BaseException {
+        try {
+            return boardRepository.searchBoardRegion(keyword, region, start_period, end_period, sort, page, size);
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    //지역x, 카테고리o
+    public List<Board> searchBoardCategory(String keyword, int category, String start_period, String end_period, int sort, int page, int size) throws BaseException {
+        try {
+            return boardRepository.searchBoardCategory(keyword, category, start_period, end_period, sort, page, size);
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    //지역o, 카테고리o
+    public List<Board> searchBoardFull(String keyword, int region, int category, String start_period, String end_period, int sort, int page, int size) throws BaseException {
+        try {
+            return boardRepository.searchBoardFull(keyword, region, category, start_period, end_period, sort, page, size);
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    /** 검색 게시글 수 조회 **/
+    //지역x, 카테고리x
+    public int getBoardCount(String keyword, String start_period, String end_period) throws BaseException {
+        try {
+            return boardRepository.getBoardCount(keyword, start_period, end_period);
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    //지역o, 카테고리x
+    public int getBoardCountRegion(String keyword, int region, String start_period, String end_period) throws BaseException {
+        try {
+            return boardRepository.getBoardCountRegion(keyword, region, start_period, end_period);
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    //지역x, 카테고리o
+    public int getBoardCountCategory(String keyword, int category, String start_period, String end_period) throws BaseException {
+        try {
+            return boardRepository.getBoardCountCategory(keyword, category, start_period, end_period);
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    //지역o, 카테고리o
+    public int getBoardCountFull(String keyword, int region, int category, String start_period, String end_period) throws BaseException {
+        try {
+            return boardRepository.getBoardCountFull(keyword, region, category, start_period, end_period);
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

@@ -174,9 +174,29 @@ public class BoardController {
      */
     @ApiOperation(value = "게시물 검색", notes = "페이징 처리")
     @GetMapping("/search")
-    public BaseResponse<List<Board>> searchBoard(@RequestParam(value = "keyword", defaultValue = "") String keyword, @RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value="size", defaultValue = "5") int size){
+    public BaseResponse<List<Board>> searchBoard(@RequestParam(value = "keyword", defaultValue = "") String keyword,
+                                                 @RequestParam(value = "region", required = false) Integer region,
+                                                 @RequestParam(value = "category", required = false) Integer category,
+                                                 @RequestParam(value = "s", defaultValue = "19000101") String start_period,
+                                                 @RequestParam(value = "e", defaultValue = "29991231") String end_period,
+                                                 @RequestParam(value = "sort", defaultValue = "1") int sort,
+                                                 @RequestParam(value = "page", defaultValue = "1") int page,
+                                                 @RequestParam(value="size", defaultValue = "5") int size) {
         try{
-            List<Board> boardList = boardService.searchBoard(keyword, page, size);
+            List<Board> boardList;
+
+            if(region == null && category == null) { //전체 조회
+                boardList = boardService.searchBoard(keyword, start_period, end_period, sort, page, size);
+            }
+            else if(region != null && category == null) { //지역 필터링
+                boardList = boardService.searchBoardRegion(keyword, region, start_period, end_period, sort, page, size);
+            }
+            else if(region == null && category != null) { //카테고리 필터링
+                boardList = boardService.searchBoardCategory(keyword, category, start_period, end_period, sort, page, size);
+            }
+            else {
+                boardList = boardService.searchBoardFull(keyword, region, category, start_period, end_period, sort, page, size);
+            }
             return new BaseResponse<>(boardList);
         } catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
@@ -188,11 +208,28 @@ public class BoardController {
      *
      * @return count
      */
-    @ApiOperation(value = "총 게시글 수 조회")
+    @ApiOperation(value = "검색 게시글 수 조회")
     @GetMapping("/count")
-    public BaseResponse<Integer> getBoardCount(@RequestParam(value = "keyword", defaultValue = "") String keyword){
+    public BaseResponse<Integer> getBoardCount(@RequestParam(value = "keyword", defaultValue = "") String keyword,
+                                               @RequestParam(value = "region", required = false) Integer region,
+                                               @RequestParam(value = "category", required = false) Integer category,
+                                               @RequestParam(value = "s", defaultValue = "19000101") String start_period,
+                                               @RequestParam(value = "e", defaultValue = "29991231") String end_period){
+        int count = 0;
         try{
-            return new BaseResponse<>(boardService.getBoardCount(keyword));
+            if(region == null && category == null) { //전체 조회
+                count = boardService.getBoardCount(keyword, start_period, end_period);
+            }
+            else if(region != null && category == null) { //지역 필터링
+                count = boardService.getBoardCountRegion(keyword, region, start_period, end_period);
+            }
+            else if(region == null && category != null) { //카테고리 필터링
+                count = boardService.getBoardCountCategory(keyword, category, start_period, end_period);
+            }
+            else {
+                count = boardService.getBoardCountFull(keyword, region, category, start_period, end_period);
+            }
+            return new BaseResponse<>(count);
         } catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }
