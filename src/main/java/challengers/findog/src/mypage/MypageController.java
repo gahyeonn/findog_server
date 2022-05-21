@@ -93,7 +93,7 @@ public class MypageController {
      * @param getCheckUserReq
      * @return
      */
-    @GetMapping("/myInfo/checkUser")
+    @PostMapping("/myInfo/checkUser")
     public BaseResponse<String> checkUserForPassword(@Valid @RequestBody GetCheckUserReq getCheckUserReq, BindingResult br){
         if(br.hasErrors()){
             String error = br.getAllErrors().get(0).getDefaultMessage();
