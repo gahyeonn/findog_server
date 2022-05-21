@@ -2,6 +2,7 @@ package challengers.findog.src.animal;
 
 import challengers.findog.src.animal.model.Animal;
 import challengers.findog.src.animal.model.AnimalSimpleDto;
+import challengers.findog.src.animal.model.DeleteUnlikeAnimalReq;
 import challengers.findog.src.animal.model.PageCriteriaDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -89,10 +90,43 @@ public class AnimalRepository {
         return jdbcTemplate.update(query, params);
     }
 
+    //유기동물 공고 관심 등록 중복 여부 확인
     public int checkLikeAnimal(int animalId, int userId){
         String query = "select exists (select animalId from `Like` where userId = ? and animalId = ?)";
         Object[] params = new Object[]{userId, animalId};
         return jdbcTemplate.queryForObject(query, int.class, params);
+    }
+
+    //유기동물 공고 관심 삭제
+    public int unlikeAnimalPost(String animalIdList, int userId){
+        String query = "delete from `Like` where userId = ? and animalId in" + "(" + animalIdList + ")";
+        return jdbcTemplate.update(query, userId);
+    }
+
+    //관심 유기동물 공고 조회
+    public List<AnimalSimpleDto> getLikeAnimalPostList(int userId, int page, int size) {
+        String query = "select * from Animal natural join (select animalId, if(userId > 0 , 1, 0) as likeFlag, likeCreateAt from `Like` where userId = ?) T " +
+                "order by likeCreateAt desc, desertionNo desc limit ? offset ?";
+        Object[] params = new Object[]{userId, size, (page - 1) * size};
+        return jdbcTemplate.query(query,
+                (rs, rowNum) -> new AnimalSimpleDto(
+                        rs.getInt("animalId"),
+                        rs.getString("processState"),
+                        rs.getString("sexCd"),
+                        rs.getString("neuterYn"),
+                        rs.getString("kindCd"),
+                        rs.getString("happenDt"),
+                        rs.getString("orgNm"),
+                        rs.getString("happenPlace"),
+                        rs.getString("popfile"),
+                        rs.getInt("likeFlag")
+                ), params);
+    }
+
+    //관심 유기동물 공고 개수
+    public int getLikeAnimalPostTotalCount(int userId){
+        String query = "select count(desertionNo) from Animal natural join (select * from `Like` where userId = ?) T";
+        return jdbcTemplate.queryForObject(query, int.class, userId);
     }
 
 }

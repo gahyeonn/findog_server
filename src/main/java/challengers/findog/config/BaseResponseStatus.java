@@ -85,6 +85,7 @@ public enum BaseResponseStatus {
     //animal
     FAIL_UPLOAD_LIKEANIMAL(false, 3112, "유기동물 공고 관심 등록에 실패하였습니다."),
     DUPLICATED_LIKEANUMAL(false, 3113, "이미 관심 등록된 유기동물 공고입니다."),
+    FAIL_DELETE_LIKEANIMAL(false, 3114, "유기동물 공고 관심 삭제를 실패하였습니다."),
 
     //mypage/{userIdx}
     FAIL_UPDATE_USER_INFO(false, 3200, "회원정보 수정에 실패하였습니다."),
