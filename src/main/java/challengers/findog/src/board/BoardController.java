@@ -174,7 +174,7 @@ public class BoardController {
      */
     @ApiOperation(value = "게시물 검색", notes = "페이징 처리")
     @GetMapping("/search")
-    public BaseResponse<List<Board>> searchBoard(@RequestParam(value = "keyword") String keyword, @RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value="size", defaultValue = "5") int size){
+    public BaseResponse<List<Board>> searchBoard(@RequestParam(value = "keyword", defaultValue = "") String keyword, @RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value="size", defaultValue = "5") int size){
         try{
             List<Board> boardList = boardService.searchBoard(keyword, page, size);
             return new BaseResponse<>(boardList);
