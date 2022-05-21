@@ -132,21 +132,6 @@ public class BoardController {
     }
 
     /**
-     * 총 게시글 수 조회 API
-     *
-     * @return count
-     */
-    @ApiOperation(value = "게시물 조회", notes = "페이징 처리")
-    @GetMapping("/count")
-    public BaseResponse<Integer> getBoardCount(){
-        try{
-            return new BaseResponse<>(boardService.getBoardCount());
-        } catch (BaseException e){
-            return new BaseResponse<>(e.getStatus());
-        }
-    }
-
-    /**
      * 게시글 좋아요 API
      *
      * @return userId, postId
@@ -193,6 +178,21 @@ public class BoardController {
         try{
             List<Board> boardList = boardService.searchBoard(keyword, page, size);
             return new BaseResponse<>(boardList);
+        } catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /**
+     * 총 게시글 수 조회 API
+     *
+     * @return count
+     */
+    @ApiOperation(value = "총 게시글 수 조회")
+    @GetMapping("/count")
+    public BaseResponse<Integer> getBoardCount(@RequestParam(value = "keyword", defaultValue = "") String keyword){
+        try{
+            return new BaseResponse<>(boardService.getBoardCount(keyword));
         } catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }
