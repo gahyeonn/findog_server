@@ -141,6 +141,21 @@ public class MypageController {
     }
 
     /**
+     * 내가 작성한 글 총 게시글 수 조회 API
+     *
+     * @return count
+     */
+    @ApiOperation(value = "내가 작성한 글 총 게시글 수 조회")
+    @GetMapping("/board/count")
+    public BaseResponse<Integer> getMyWriteBoardCount(){
+        try{
+            return new BaseResponse<>(mypageService.getMyWriteBoardCount());
+        } catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /**
      * 내가 좋아요한 글 조회 API
      *
      * @return boardList
@@ -152,6 +167,21 @@ public class MypageController {
             int userId = jwtService.getUserIdx();
             List<Board> boardList = mypageService.getMyLikeBoardList(userId, page, size);
             return new BaseResponse<>(boardList);
+        } catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /**
+     * 내가 좋아요한 글 총 게시글 수 조회 API
+     *
+     * @return count
+     */
+    @ApiOperation(value = "내가 좋아요한 글 총 게시글 수 조회")
+    @GetMapping("/board/count")
+    public BaseResponse<Integer> getMyLikeBoardCount(){
+        try{
+            return new BaseResponse<>(mypageService.getMyLikeBoardCount());
         } catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }

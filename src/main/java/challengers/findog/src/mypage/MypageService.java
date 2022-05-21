@@ -139,10 +139,28 @@ public class MypageService {
         }
     }
 
+    //내가 작성한 글 총 게시물 수 조회
+    public int getMyWriteBoardCount() throws BaseException {
+        try {
+            return mypageRepository.getMyWriteBoardCount();
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
     //내가 좋아요한 글 조회
     public List<Board> getMyLikeBoardList(int userId, int page, int size) throws BaseException {
         try {
             return mypageRepository.getMyLikeBoardList(userId, page, size);
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    //내가 좋아요 글 총 게시물 수 조회
+    public int getMyLikeBoardCount() throws BaseException {
+        try {
+            return mypageRepository.getMyLikeBoardCount();
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
