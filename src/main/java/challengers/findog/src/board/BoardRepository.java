@@ -137,12 +137,6 @@ public class BoardRepository {
                 )), size, (page-1)*size);
     }
 
-    //총 게시글 수 조회
-    public Integer getBoardCount() {
-        String query = "select COUNT(postId) from Post";
-        return jdbcTemplate.queryForObject(query, int.class);
-    }
-
     //게시글 좋아요
     public void likeBoard(int userId, int postId) {
         String query = "insert into `Like` (userId, postId) VALUES (?,?)";
@@ -171,5 +165,11 @@ public class BoardRepository {
                 "order by postId desc, postCreateAt desc " +
                 "limit ? offset ?";
         return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Board.class), keyword, keyword, size, (page-1)*size);
+    }
+
+    //총 게시글 수 조회
+    public Integer getBoardCount(String keyword) {
+        String query = "select COUNT(postId) from Post where postId > 0 and ((title like concat ('%', ?, '%')) or (content like concat ('%', ?, '%')))";
+        return jdbcTemplate.queryForObject(query, int.class, keyword);
     }
 }
