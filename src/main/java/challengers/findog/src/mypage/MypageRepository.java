@@ -112,4 +112,20 @@ public class MypageRepository {
                         rs.getInt("hits")
                 )), userId, size, (page-1)*size);
     }
+
+    //내가 작성한 글 총 게시글 수 조회
+    public Integer getMyWriteBoardCount() {
+        String query = "select COUNT(postId) from Post where userId = ?";
+        return jdbcTemplate.queryForObject(query, int.class);
+    }
+
+    //내가 좋아요한 글 총 게시글 수 조회
+    public Integer getMyLikeBoardCount() {
+        String query = "select count(P.postId)\n" +
+                "from Post P\n" +
+                "    left join `Like` L on L.postId = P.postId\n" +
+                "where L.userId = ? and L.animalId is null\n" +
+                "group by P.postId";
+        return jdbcTemplate.queryForObject(query, int.class);
+    }
 }
