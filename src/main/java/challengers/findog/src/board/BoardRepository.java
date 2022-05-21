@@ -170,6 +170,6 @@ public class BoardRepository {
     //총 게시글 수 조회
     public Integer getBoardCount(String keyword) {
         String query = "select COUNT(postId) from Post where postId > 0 and ((title like concat ('%', ?, '%')) or (content like concat ('%', ?, '%')))";
-        return jdbcTemplate.queryForObject(query, int.class, keyword);
+        return jdbcTemplate.queryForObject(query, int.class, keyword, keyword);
     }
 }
