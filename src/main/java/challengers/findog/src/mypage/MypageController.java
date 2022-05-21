@@ -178,7 +178,7 @@ public class MypageController {
      * @return count
      */
     @ApiOperation(value = "내가 좋아요한 글 총 게시글 수 조회")
-    @GetMapping("/board/count")
+    @GetMapping("/like/count")
     public BaseResponse<Integer> getMyLikeBoardCount(){
         try{
             return new BaseResponse<>(mypageService.getMyLikeBoardCount());
