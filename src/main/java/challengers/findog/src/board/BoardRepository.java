@@ -154,22 +154,217 @@ public class BoardRepository {
         return this.jdbcTemplate.queryForObject(query, int.class, postId);
     }
 
-    //게시글 검색
-    public List<Board> searchBoard(String keyword, int page, int size) {
-        String query = "select P.postId, P.userId, nickname, profileUrl, title, category, region, thumbnail, P.content, postCreateAt, likeCount, commentCount, hits " +
-                "from Post P left join User U on P.userId = U.userId " +
-                "left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId " +
-                "left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId " +
-                "left join (SELECT postId, Count(likeId) as likeCount FROM `Like` GROUP BY postId) L on L.postId = P.postId " +
-                "where P.postId > 0 and ((title like concat ('%', ?, '%')) or (P.content like concat ('%', ?, '%'))) " +
-                "order by postId desc, postCreateAt desc " +
-                "limit ? offset ?";
-        return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Board.class), keyword, keyword, size, (page-1)*size);
+    /** 게시글 검색 **/
+    //지역x, 카테고리x
+    public List<Board> searchBoard(String keyword, String start_period, String end_period, int sort, int page, int size) {
+        if(sort == 1) { //최신순 조회
+            String query = "select P.postId, P.userId, nickname, profileUrl, title, category, region, thumbnail, P.content, postCreateAt, if(likeCount is null, 0, likeCount) as likeCount, if(commentCount is null, 0, commentCount) as commentCount, hits\n" +
+                    "from Post P left join User U on P.userId = U.userId\n" +
+                    "    left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId\n" +
+                    "    left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId\n" +
+                    "    left join (SELECT postId, Count(likeId) as likeCount FROM `Like` GROUP BY postId) L on L.postId = P.postId\n" +
+                    "where ((title like concat ('%', ?, '%')) or (P.content like concat ('%', ?, '%')))\n" +
+                    "  and postCreateAt between STR_TO_DATE(?, '%Y%m%d') and STR_TO_DATE(concat(?, 235959), '%Y%m%d%H%i%s')\n" +
+                    "order by postId desc, postCreateAt desc\n" +
+                    "limit ? offset ?";
+            return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Board.class), keyword, keyword, start_period, end_period, size, (page - 1) * size);
+        }
+        else if(sort == 2) { //조회수순 조회
+            String query = "select P.postId, P.userId, nickname, profileUrl, title, category, region, thumbnail, P.content, postCreateAt, if(likeCount is null, 0, likeCount) as likeCount, if(commentCount is null, 0, commentCount) as commentCount, hits\n" +
+                    "from Post P left join User U on P.userId = U.userId\n" +
+                    "    left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId\n" +
+                    "    left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId\n" +
+                    "    left join (SELECT postId, Count(likeId) as likeCount FROM `Like` GROUP BY postId) L on L.postId = P.postId\n" +
+                    "where ((title like concat ('%', ?, '%')) or (P.content like concat ('%', ?, '%')))\n" +
+                    "  and postCreateAt between STR_TO_DATE(?, '%Y%m%d') and STR_TO_DATE(concat(?, 235959), '%Y%m%d%H%i%s')\n" +
+                    "order by hits desc, postCreateAt desc\n" +
+                    "limit ? offset ?";
+            return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Board.class), keyword, keyword, start_period, end_period, size, (page - 1) * size);
+        }
+        else { //좋아요순 조회
+            String query = "select P.postId, P.userId, nickname, profileUrl, title, category, region, thumbnail, P.content, postCreateAt, if(likeCount is null, 0, likeCount) as likeCount, if(commentCount is null, 0, commentCount) as commentCount, hits\n" +
+                    "from Post P left join User U on P.userId = U.userId\n" +
+                    "    left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId\n" +
+                    "    left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId\n" +
+                    "    left join (SELECT postId, Count(likeId) as likeCount FROM `Like` GROUP BY postId) L on L.postId = P.postId\n" +
+                    "where ((title like concat ('%', ?, '%')) or (P.content like concat ('%', ?, '%')))\n" +
+                    "  and postCreateAt >= ? and postCreateAt <= ?\n" +
+                    "order by likeCount desc, postCreateAt desc\n" +
+                    "limit ? offset ?";
+            return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Board.class), keyword, keyword, start_period, end_period, size, (page - 1) * size);
+        }
     }
 
-    //총 게시글 수 조회
-    public Integer getBoardCount(String keyword) {
-        String query = "select COUNT(postId) from Post where postId > 0 and ((title like concat ('%', ?, '%')) or (content like concat ('%', ?, '%')))";
-        return jdbcTemplate.queryForObject(query, int.class, keyword, keyword);
+    //지역o, 카테고리x
+    public List<Board> searchBoardRegion(String keyword, int region, String start_period, String end_period, int sort, int page, int size) {
+        if(sort == 1) { //최신순 조회
+            String query = "select P.postId, P.userId, nickname, profileUrl, title, category, region, thumbnail, P.content, postCreateAt, if(likeCount is null, 0, likeCount) as likeCount, if(commentCount is null, 0, commentCount) as commentCount, hits\n" +
+                    "from Post P left join User U on P.userId = U.userId\n" +
+                    "    left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId\n" +
+                    "    left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId\n" +
+                    "    left join (SELECT postId, Count(likeId) as likeCount FROM `Like` GROUP BY postId) L on L.postId = P.postId\n" +
+                    "where ((title like concat ('%', ?, '%')) or (P.content like concat ('%', ?, '%')))\n" +
+                    "  and region = ?\n" +
+                    "  and postCreateAt between STR_TO_DATE(?, '%Y%m%d') and STR_TO_DATE(concat(?, 235959), '%Y%m%d%H%i%s')\n" +
+                    "order by postId desc, postCreateAt desc\n" +
+                    "limit ? offset ?";
+            return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Board.class), keyword, keyword, region, start_period, end_period, size, (page - 1) * size);
+        }
+        else if(sort == 2) { //조회수순 조회
+            String query = "select P.postId, P.userId, nickname, profileUrl, title, category, region, thumbnail, P.content, postCreateAt, if(likeCount is null, 0, likeCount) as likeCount, if(commentCount is null, 0, commentCount) as commentCount, hits\n" +
+                    "from Post P left join User U on P.userId = U.userId\n" +
+                    "    left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId\n" +
+                    "    left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId\n" +
+                    "    left join (SELECT postId, Count(likeId) as likeCount FROM `Like` GROUP BY postId) L on L.postId = P.postId\n" +
+                    "where ((title like concat ('%', ?, '%')) or (P.content like concat ('%', ?, '%')))\n" +
+                    "  and region = ?\n" +
+                    "  and postCreateAt between STR_TO_DATE(?, '%Y%m%d') and STR_TO_DATE(concat(?, 235959), '%Y%m%d%H%i%s')\n" +
+                    "order by hits desc, postCreateAt desc\n" +
+                    "limit ? offset ?";
+            return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Board.class), keyword, keyword, region, start_period, end_period, size, (page - 1) * size);
+        }
+        else { //좋아요순 조회
+            String query = "select P.postId, P.userId, nickname, profileUrl, title, category, region, thumbnail, P.content, postCreateAt, if(likeCount is null, 0, likeCount) as likeCount, if(commentCount is null, 0, commentCount) as commentCount, hits\n" +
+                    "from Post P left join User U on P.userId = U.userId\n" +
+                    "    left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId\n" +
+                    "    left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId\n" +
+                    "    left join (SELECT postId, Count(likeId) as likeCount FROM `Like` GROUP BY postId) L on L.postId = P.postId\n" +
+                    "where ((title like concat ('%', ?, '%')) or (P.content like concat ('%', ?, '%')))\n" +
+                    "  and region = ?\n" +
+                    "  and postCreateAt >= ? and postCreateAt <= ?\n" +
+                    "order by likeCount desc, postCreateAt desc\n" +
+                    "limit ? offset ?";
+            return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Board.class), keyword, keyword, region, start_period, end_period, size, (page - 1) * size);
+        }
+    }
+
+    //지역x, 카테고리o
+    public List<Board> searchBoardCategory(String keyword, int category, String start_period, String end_period, int sort, int page, int size) {
+        if(sort == 1) { //최신순 조회
+            String query = "select P.postId, P.userId, nickname, profileUrl, title, category, region, thumbnail, P.content, postCreateAt, if(likeCount is null, 0, likeCount) as likeCount, if(commentCount is null, 0, commentCount) as commentCount, hits\n" +
+                    "from Post P left join User U on P.userId = U.userId\n" +
+                    "    left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId\n" +
+                    "    left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId\n" +
+                    "    left join (SELECT postId, Count(likeId) as likeCount FROM `Like` GROUP BY postId) L on L.postId = P.postId\n" +
+                    "where ((title like concat ('%', ?, '%')) or (P.content like concat ('%', ?, '%')))\n" +
+                    "  and category = ?\n" +
+                    "  and postCreateAt between STR_TO_DATE(?, '%Y%m%d') and STR_TO_DATE(concat(?, 235959), '%Y%m%d%H%i%s')\n" +
+                    "order by postId desc, postCreateAt desc\n" +
+                    "limit ? offset ?";
+            return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Board.class), keyword, keyword, category, start_period, end_period, size, (page - 1) * size);
+        }
+        else if(sort == 2) { //조회수순 조회
+            String query = "select P.postId, P.userId, nickname, profileUrl, title, category, region, thumbnail, P.content, postCreateAt, if(likeCount is null, 0, likeCount) as likeCount, if(commentCount is null, 0, commentCount) as commentCount, hits\n" +
+                    "from Post P left join User U on P.userId = U.userId\n" +
+                    "    left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId\n" +
+                    "    left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId\n" +
+                    "    left join (SELECT postId, Count(likeId) as likeCount FROM `Like` GROUP BY postId) L on L.postId = P.postId\n" +
+                    "where ((title like concat ('%', ?, '%')) or (P.content like concat ('%', ?, '%')))\n" +
+                    "  and category = ?\n" +
+                    "  and postCreateAt between STR_TO_DATE(?, '%Y%m%d') and STR_TO_DATE(concat(?, 235959), '%Y%m%d%H%i%s')\n" +
+                    "order by hits desc, postCreateAt desc\n" +
+                    "limit ? offset ?";
+            return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Board.class), keyword, keyword, category, start_period, end_period, size, (page - 1) * size);
+        }
+        else { //좋아요순 조회
+            String query = "select P.postId, P.userId, nickname, profileUrl, title, category, region, thumbnail, P.content, postCreateAt, if(likeCount is null, 0, likeCount) as likeCount, if(commentCount is null, 0, commentCount) as commentCount, hits\n" +
+                    "from Post P left join User U on P.userId = U.userId\n" +
+                    "    left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId\n" +
+                    "    left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId\n" +
+                    "    left join (SELECT postId, Count(likeId) as likeCount FROM `Like` GROUP BY postId) L on L.postId = P.postId\n" +
+                    "where ((title like concat ('%', ?, '%')) or (P.content like concat ('%', ?, '%')))\n" +
+                    "  and category = ?\n" +
+                    "  and postCreateAt >= ? and postCreateAt <= ?\n" +
+                    "order by likeCount desc, postCreateAt desc\n" +
+                    "limit ? offset ?";
+            return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Board.class), keyword, keyword, category, start_period, end_period, size, (page - 1) * size);
+        }
+    }
+
+    //지역o, 카테고리o
+    public List<Board> searchBoardFull(String keyword, int region, int category, String start_period, String end_period, int sort, int page, int size) {
+        if(sort == 1) { //최신순 조회
+            String query = "select P.postId, P.userId, nickname, profileUrl, title, category, region, thumbnail, P.content, postCreateAt, if(likeCount is null, 0, likeCount) as likeCount, if(commentCount is null, 0, commentCount) as commentCount, hits\n" +
+                    "from Post P left join User U on P.userId = U.userId\n" +
+                    "    left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId\n" +
+                    "    left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId\n" +
+                    "    left join (SELECT postId, Count(likeId) as likeCount FROM `Like` GROUP BY postId) L on L.postId = P.postId\n" +
+                    "where ((title like concat ('%', ?, '%')) or (P.content like concat ('%', ?, '%')))\n" +
+                    "  and region = ?\n" +
+                    "  and category = ?\n" +
+                    "  and postCreateAt between STR_TO_DATE(?, '%Y%m%d') and STR_TO_DATE(concat(?, 235959), '%Y%m%d%H%i%s')\n" +
+                    "order by postId desc, postCreateAt desc\n" +
+                    "limit ? offset ?";
+            return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Board.class), keyword, keyword, region, category, start_period, end_period, size, (page - 1) * size);
+        }
+        else if(sort == 2) { //조회수순 조회
+            String query = "select P.postId, P.userId, nickname, profileUrl, title, category, region, thumbnail, P.content, postCreateAt, if(likeCount is null, 0, likeCount) as likeCount, if(commentCount is null, 0, commentCount) as commentCount, hits\n" +
+                    "from Post P left join User U on P.userId = U.userId\n" +
+                    "    left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId\n" +
+                    "    left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId\n" +
+                    "    left join (SELECT postId, Count(likeId) as likeCount FROM `Like` GROUP BY postId) L on L.postId = P.postId\n" +
+                    "where ((title like concat ('%', ?, '%')) or (P.content like concat ('%', ?, '%')))\n" +
+                    "  and region = ?\n" +
+                    "  and category = ?\n" +
+                    "  and postCreateAt between STR_TO_DATE(?, '%Y%m%d') and STR_TO_DATE(concat(?, 235959), '%Y%m%d%H%i%s')\n" +
+                    "order by hits desc, postCreateAt desc\n" +
+                    "limit ? offset ?";
+            return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Board.class), keyword, keyword, region, category, start_period, end_period, size, (page - 1) * size);
+        }
+        else { //좋아요순 조회
+            String query = "select P.postId, P.userId, nickname, profileUrl, title, category, region, thumbnail, P.content, postCreateAt, if(likeCount is null, 0, likeCount) as likeCount, if(commentCount is null, 0, commentCount) as commentCount, hits\n" +
+                    "from Post P left join User U on P.userId = U.userId\n" +
+                    "    left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId\n" +
+                    "    left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId\n" +
+                    "    left join (SELECT postId, Count(likeId) as likeCount FROM `Like` GROUP BY postId) L on L.postId = P.postId\n" +
+                    "where ((title like concat ('%', ?, '%')) or (P.content like concat ('%', ?, '%')))\n" +
+                    "  and region = ?\n" +
+                    "  and category = ?\n" +
+                    "  and postCreateAt >= ? and postCreateAt <= ?\n" +
+                    "order by likeCount desc, postCreateAt desc\n" +
+                    "limit ? offset ?";
+            return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Board.class), keyword, keyword, region, category, start_period, end_period, size, (page - 1) * size);
+        }
+    }
+
+    /** 검색 게시글 수 조회 **/
+    //지역x, 카테고리x
+    public Integer getBoardCount(String keyword, String start_period, String end_period) {
+        String query = "select count(postId)\n" +
+                "from Post\n" +
+                "where ((title like concat ('%', ?, '%')) or (content like concat ('%', ?, '%')))\n" +
+                "  and postCreateAt between STR_TO_DATE(?, '%Y%m%d') and STR_TO_DATE(concat(?, 235959), '%Y%m%d%H%i%s')";
+        return jdbcTemplate.queryForObject(query, int.class, keyword, keyword, start_period, end_period);
+    }
+
+    //지역o, 카테고리x
+    public Integer getBoardCountRegion(String keyword, int region, String start_period, String end_period) {
+        String query = "select count(postId)\n" +
+                "from Post\n" +
+                "where ((title like concat ('%', ?, '%')) or (content like concat ('%', ?, '%')))\n" +
+                "  and region = ?\n" +
+                "  and postCreateAt between STR_TO_DATE(?, '%Y%m%d') and STR_TO_DATE(concat(?, 235959), '%Y%m%d%H%i%s')";
+        return jdbcTemplate.queryForObject(query, int.class, keyword, keyword, region, start_period, end_period);
+    }
+
+    //지역x, 카테고리o
+    public Integer getBoardCountCategory(String keyword, int category, String start_period, String end_period) {
+        String query = "select count(postId)\n" +
+                "from Post\n" +
+                "where ((title like concat ('%', ?, '%')) or (content like concat ('%', ?, '%')))\n" +
+                "  and category = ?\n" +
+                "  and postCreateAt between STR_TO_DATE(?, '%Y%m%d') and STR_TO_DATE(concat(?, 235959), '%Y%m%d%H%i%s')";
+        return jdbcTemplate.queryForObject(query, int.class, keyword, keyword, category, start_period, end_period);
+    }
+
+    //지역o, 카테고리o
+    public Integer getBoardCountFull(String keyword, int region, int category, String start_period, String end_period) {
+        String query = "select count(postId)\n" +
+                "from Post\n" +
+                "where ((title like concat ('%', ?, '%')) or (content like concat ('%', ?, '%')))\n" +
+                "  and region = ?\n" +
+                "  and category = ?\n" +
+                "  and postCreateAt between STR_TO_DATE(?, '%Y%m%d') and STR_TO_DATE(concat(?, 235959), '%Y%m%d%H%i%s')";
+        return jdbcTemplate.queryForObject(query, int.class, keyword, keyword, region, category, start_period, end_period);
     }
 }
