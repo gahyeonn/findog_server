@@ -169,7 +169,19 @@ public class BoardRepository {
                     "limit ? offset ?";
             return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Board.class), keyword, keyword, start_period, end_period, size, (page - 1) * size);
         }
-        else { //인기순 조회
+        else if(sort == 2) { //조회수순 조회
+            String query = "select P.postId, P.userId, nickname, profileUrl, title, category, region, thumbnail, P.content, postCreateAt, if(likeCount is null, 0, likeCount) as likeCount, if(commentCount is null, 0, commentCount) as commentCount, hits\n" +
+                    "from Post P left join User U on P.userId = U.userId\n" +
+                    "    left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId\n" +
+                    "    left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId\n" +
+                    "    left join (SELECT postId, Count(likeId) as likeCount FROM `Like` GROUP BY postId) L on L.postId = P.postId\n" +
+                    "where ((title like concat ('%', ?, '%')) or (P.content like concat ('%', ?, '%')))\n" +
+                    "  and postCreateAt between STR_TO_DATE(?, '%Y%m%d') and STR_TO_DATE(concat(?, 235959), '%Y%m%d%H%i%s')\n" +
+                    "order by hits desc, postCreateAt desc\n" +
+                    "limit ? offset ?";
+            return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Board.class), keyword, keyword, start_period, end_period, size, (page - 1) * size);
+        }
+        else { //좋아요순 조회
             String query = "select P.postId, P.userId, nickname, profileUrl, title, category, region, thumbnail, P.content, postCreateAt, if(likeCount is null, 0, likeCount) as likeCount, if(commentCount is null, 0, commentCount) as commentCount, hits\n" +
                     "from Post P left join User U on P.userId = U.userId\n" +
                     "    left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId\n" +
@@ -198,7 +210,20 @@ public class BoardRepository {
                     "limit ? offset ?";
             return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Board.class), keyword, keyword, region, start_period, end_period, size, (page - 1) * size);
         }
-        else { //인기순 조회
+        else if(sort == 2) { //조회수순 조회
+            String query = "select P.postId, P.userId, nickname, profileUrl, title, category, region, thumbnail, P.content, postCreateAt, if(likeCount is null, 0, likeCount) as likeCount, if(commentCount is null, 0, commentCount) as commentCount, hits\n" +
+                    "from Post P left join User U on P.userId = U.userId\n" +
+                    "    left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId\n" +
+                    "    left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId\n" +
+                    "    left join (SELECT postId, Count(likeId) as likeCount FROM `Like` GROUP BY postId) L on L.postId = P.postId\n" +
+                    "where ((title like concat ('%', ?, '%')) or (P.content like concat ('%', ?, '%')))\n" +
+                    "  and region = ?\n" +
+                    "  and postCreateAt between STR_TO_DATE(?, '%Y%m%d') and STR_TO_DATE(concat(?, 235959), '%Y%m%d%H%i%s')\n" +
+                    "order by hits desc, postCreateAt desc\n" +
+                    "limit ? offset ?";
+            return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Board.class), keyword, keyword, region, start_period, end_period, size, (page - 1) * size);
+        }
+        else { //좋아요순 조회
             String query = "select P.postId, P.userId, nickname, profileUrl, title, category, region, thumbnail, P.content, postCreateAt, if(likeCount is null, 0, likeCount) as likeCount, if(commentCount is null, 0, commentCount) as commentCount, hits\n" +
                     "from Post P left join User U on P.userId = U.userId\n" +
                     "    left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId\n" +
@@ -228,7 +253,20 @@ public class BoardRepository {
                     "limit ? offset ?";
             return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Board.class), keyword, keyword, category, start_period, end_period, size, (page - 1) * size);
         }
-        else { //인기순 조회
+        else if(sort == 2) { //조회수순 조회
+            String query = "select P.postId, P.userId, nickname, profileUrl, title, category, region, thumbnail, P.content, postCreateAt, if(likeCount is null, 0, likeCount) as likeCount, if(commentCount is null, 0, commentCount) as commentCount, hits\n" +
+                    "from Post P left join User U on P.userId = U.userId\n" +
+                    "    left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId\n" +
+                    "    left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId\n" +
+                    "    left join (SELECT postId, Count(likeId) as likeCount FROM `Like` GROUP BY postId) L on L.postId = P.postId\n" +
+                    "where ((title like concat ('%', ?, '%')) or (P.content like concat ('%', ?, '%')))\n" +
+                    "  and category = ?\n" +
+                    "  and postCreateAt between STR_TO_DATE(?, '%Y%m%d') and STR_TO_DATE(concat(?, 235959), '%Y%m%d%H%i%s')\n" +
+                    "order by hits desc, postCreateAt desc\n" +
+                    "limit ? offset ?";
+            return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Board.class), keyword, keyword, category, start_period, end_period, size, (page - 1) * size);
+        }
+        else { //좋아요순 조회
             String query = "select P.postId, P.userId, nickname, profileUrl, title, category, region, thumbnail, P.content, postCreateAt, if(likeCount is null, 0, likeCount) as likeCount, if(commentCount is null, 0, commentCount) as commentCount, hits\n" +
                     "from Post P left join User U on P.userId = U.userId\n" +
                     "    left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId\n" +
@@ -259,7 +297,21 @@ public class BoardRepository {
                     "limit ? offset ?";
             return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Board.class), keyword, keyword, region, category, start_period, end_period, size, (page - 1) * size);
         }
-        else { //인기순 조회
+        else if(sort == 2) { //조회수순 조회
+            String query = "select P.postId, P.userId, nickname, profileUrl, title, category, region, thumbnail, P.content, postCreateAt, if(likeCount is null, 0, likeCount) as likeCount, if(commentCount is null, 0, commentCount) as commentCount, hits\n" +
+                    "from Post P left join User U on P.userId = U.userId\n" +
+                    "    left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId\n" +
+                    "    left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId\n" +
+                    "    left join (SELECT postId, Count(likeId) as likeCount FROM `Like` GROUP BY postId) L on L.postId = P.postId\n" +
+                    "where ((title like concat ('%', ?, '%')) or (P.content like concat ('%', ?, '%')))\n" +
+                    "  and region = ?\n" +
+                    "  and category = ?\n" +
+                    "  and postCreateAt between STR_TO_DATE(?, '%Y%m%d') and STR_TO_DATE(concat(?, 235959), '%Y%m%d%H%i%s')\n" +
+                    "order by hits desc, postCreateAt desc\n" +
+                    "limit ? offset ?";
+            return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Board.class), keyword, keyword, region, category, start_period, end_period, size, (page - 1) * size);
+        }
+        else { //좋아요순 조회
             String query = "select P.postId, P.userId, nickname, profileUrl, title, category, region, thumbnail, P.content, postCreateAt, if(likeCount is null, 0, likeCount) as likeCount, if(commentCount is null, 0, commentCount) as commentCount, hits\n" +
                     "from Post P left join User U on P.userId = U.userId\n" +
                     "    left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId\n" +
