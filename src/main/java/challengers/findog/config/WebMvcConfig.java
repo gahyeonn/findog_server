@@ -11,19 +11,15 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3001", "http://localhost:3000",
-                        "https://findog.co.kr", "https://www.findog.co.kr",
-                        "http://findog.co.kr", "http://www.findog.co.kr",
-                        "https://findog.co.kr:3000", "https://www.findog.co.kr:3000",
-                        "http://findog.co.kr:3000", "http://www.findog.co.kr:3000",
-                        "https://findog.co.kr:3001", "https://www.findog.co.kr:3001",
-                        "http://findog.co.kr:3001", "http://www.findog.co.kr:3001",
-                        "https://main--celebrated-sawine-8ea9c1.netlify.app",
-                        "http://main--celebrated-sawine-8ea9c1.netlify.app",
-                        "https://main--celebrated-sawine-8ea9c1.netlify.app:3000",
-                        "http://main--celebrated-sawine-8ea9c1.netlify.app:3000",
-                        "https://main--celebrated-sawine-8ea9c1.netlify.app:3001",
-                        "http://main--celebrated-sawine-8ea9c1.netlify.app:3001")
+                .allowedOrigins("http://localhost:3000")
+                .allowedOrigins("http://localhost:3001")
+                .allowedOrigins("https://findog.co.kr")
+                .allowedOrigins("https://findog.co.kr:3000")
+                .allowedOrigins("https://findog.co.kr:3001")
+                .allowedOrigins("https://main--celebrated-sawine-8ea9c1.netlify.app")
+                .allowedOrigins("https://main--celebrated-sawine-8ea9c1.netlify.app:3000")
+                .allowedOrigins("https://main--celebrated-sawine-8ea9c1.netlify.app:3001")
+                .allowedOrigins("")
                 .allowedMethods("*")
                 .allowedHeaders("*");
     }
