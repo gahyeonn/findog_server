@@ -11,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/animals")
@@ -92,6 +95,41 @@ public class AnimalController {
         } catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }
+    }
+
+
+    /**
+     * 유기동물 공고 조회
+     * @param page
+     * @param size
+     * @param word
+     * @param region
+     * @param category
+     * @param breed
+     * @param status
+     * @return
+     */
+    @GetMapping("/search")
+    public BaseResponse<GetAnimalListRes> searchAnimals(@RequestParam(value = "page", defaultValue = "1") int page,
+                                                        @RequestParam(value = "size", defaultValue = "6") int size,
+                                                        @RequestParam(value = "word", required = false) String word,
+                                                        @RequestParam(value = "region", required = false) String region,
+                                                        @RequestParam(value = "category", required = false) String category,
+                                                        @RequestParam(value = "breed", required = false) String breed,
+                                                        @RequestParam(value = "status", required = false) String status) {
+        try{
+            int userId = 0;
+            if(jwtService.getJwt() != null && jwtService.getJwt().length() != 0) {
+                userId = jwtService.getUserIdx();
+            }
+
+            String[] condition = {word, region, category, breed, status};
+
+            return new BaseResponse<>(animalService.searchAnimals(userId, page, size, condition));
+        } catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+
     }
 
 }
