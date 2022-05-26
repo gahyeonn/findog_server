@@ -153,4 +153,59 @@ public class AnimalService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    //유기동물 검색
+    public GetAnimalListRes searchAnimals(int userId, int page, int size, String[] condition) throws BaseException {
+        try{
+            String filter = makeFilter(condition);
+            List<AnimalSimpleDto> animalList = animalRepository.searchAnimals(userId, page, size, filter);
+            int totalCount = animalRepository.getsearchedAnimalPostTotalCount(filter);
+            int totalPage = (totalCount % size != 0) ? totalCount / size + 1 : totalCount / size;
+
+            PageCriteriaDto pageCriteriaDto = new PageCriteriaDto(totalCount, totalPage, page, size);
+            return new GetAnimalListRes(pageCriteriaDto, animalList);
+        } catch (Exception e){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    //필터 조건 만드는 함수
+    public String makeFilter(String[] condition) {
+        StringBuilder sb = new StringBuilder();
+        int andFlag = 0;
+
+        sb.append("(");
+
+        for(int i = 0; i < condition.length; i++){
+            if(condition[i] != null && condition[i].length() != 0){
+                switch (i) {
+                    case 0:
+                        sb.append("(colorCd like '%").append(condition[i]).append("%' or ");
+                        sb.append("kindCd like '%").append(condition[i]).append("%' or ");
+                        sb.append("specialMark like '%").append(condition[i]).append("%')");
+                        break;
+                    case 1:
+                        sb.append("orgNm like '%").append(condition[i]).append("%'");
+                        break;
+                    case 2:
+                    case 3:
+                        sb.append("kindCd like '%").append(condition[i]).append("%'");
+                        break;
+                    case 4:
+                        sb.append("processState like '%").append(condition[i]).append("%'");
+                        break;
+                }
+                andFlag = 1;
+            }
+
+            if(andFlag == 1 && i != 4) {
+                sb.append(" and ");
+                andFlag = 0;
+            }
+        }
+
+        sb.append(")");
+
+        return sb.toString();
+    }
 }
