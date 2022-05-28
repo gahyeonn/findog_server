@@ -178,6 +178,11 @@ public class AnimalService {
 
         for(int i = 0; i < condition.length; i++){
             if(condition[i] != null && condition[i].length() != 0){
+                if(andFlag == 1) {
+                    sb.append(" and ");
+                    andFlag = 0;
+                }
+
                 switch (i) {
                     case 0:
                         sb.append("(colorCd like '%").append(condition[i]).append("%' or ");
@@ -196,11 +201,6 @@ public class AnimalService {
                         break;
                 }
                 andFlag = 1;
-            }
-
-            if(andFlag == 1 && i != 4) {
-                sb.append(" and ");
-                andFlag = 0;
             }
         }
 
