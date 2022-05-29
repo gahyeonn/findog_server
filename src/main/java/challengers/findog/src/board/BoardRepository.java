@@ -138,15 +138,15 @@ public class BoardRepository {
     }
 
     //게시글 좋아요
-    public void likeBoard(int userId, int postId) {
+    public void likeBoard(int postId, int userId) {
         String query = "insert into `Like` (userId, postId) VALUES (?,?)";
-        this.jdbcTemplate.update(query, userId, postId);
+        this.jdbcTemplate.update(query, postId, userId);
     }
 
     //게시글 좋아요 취소
-    public void likeCancelBoard(int userId, int postId) {
+    public void likeCancelBoard(int postId , int userId) {
         String query = "delete from `Like` where userId =? and postId =?";
-        this.jdbcTemplate.update(query, userId, postId);
+        this.jdbcTemplate.update(query, postId, userId);
     }
 
     public int checkAuth(int postId) {
