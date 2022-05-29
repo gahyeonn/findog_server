@@ -129,4 +129,32 @@ public class AnimalRepository {
         return jdbcTemplate.queryForObject(query, int.class, userId);
     }
 
+    //유기동물 공고 검색
+    public List<AnimalSimpleDto> searchAnimals(int userId, int page, int size, String filter) {
+        String query = "select * from (select * from Animal where " + filter +
+        ") A left join (select animalId, if(userId > 0 , 1, 0) as likeFlag from `Like` where userId = ?) l on A.animalId = l.animalId " +
+                "order by noticeSdt desc, desertionNo desc limit ? offset ?";
+
+        Object[] params = new Object[]{userId, size, (page - 1) * size};
+        return jdbcTemplate.query(query,
+                (rs, rowNum) -> new AnimalSimpleDto(
+                        rs.getInt("animalId"),
+                        rs.getString("processState"),
+                        rs.getString("sexCd"),
+                        rs.getString("neuterYn"),
+                        rs.getString("kindCd"),
+                        rs.getString("happenDt"),
+                        rs.getString("orgNm"),
+                        rs.getString("happenPlace"),
+                        rs.getString("popfile"),
+                        rs.getInt("likeFlag")
+                ), params);
+    }
+
+    //검색한 유기동물 페이징
+    public int getsearchedAnimalPostTotalCount(String filter) {
+        String query = "select count(desertionNo) from Animal where " + filter;
+        return jdbcTemplate.queryForObject(query, int.class);
+    }
+
 }
