@@ -157,7 +157,7 @@ public class MypageService {
         }
     }
 
-    //내가 좋아요 글 총 게시물 수 조회
+    //내가 좋아요한 글 총 게시물 수 조회
     public int getMyLikeBoardCount(int userId) throws BaseException {
         try {
             return mypageRepository.getMyLikeBoardCount(userId);
