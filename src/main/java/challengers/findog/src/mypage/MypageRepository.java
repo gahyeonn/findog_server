@@ -92,6 +92,7 @@ public class MypageRepository {
                 "         left join (select userId, postId, count(likeId) as likeCount from `Like` group by postId) LC on P.postId = LC.postId\n" +
                 "         left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId\n" +
                 "         left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId\n" +
+                "where P.postId > 0\n" +
                 "order by P.postId desc\n" +
                 "limit ? offset ?";
         return jdbcTemplate.query(query,
