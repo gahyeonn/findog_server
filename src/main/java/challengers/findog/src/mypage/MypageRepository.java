@@ -121,11 +121,10 @@ public class MypageRepository {
 
     //내가 좋아요한 글 총 게시글 수 조회
     public Integer getMyLikeBoardCount(int userId) {
-        String query = "select count(P.postId)\n" +
+        String query = "select COUNT(P.postId)\n" +
                 "from Post P\n" +
                 "    left join `Like` L on L.postId = P.postId\n" +
-                "where L.userId = ? and L.animalId is null\n" +
-                "group by P.postId";
+                "where L.userId = ? and L.animalId is null";
         return jdbcTemplate.queryForObject(query, int.class, userId);
     }
 }
