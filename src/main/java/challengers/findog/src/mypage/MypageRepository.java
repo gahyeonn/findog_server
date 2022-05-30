@@ -85,12 +85,12 @@ public class MypageRepository {
 
     //내가 좋아요한 글 조회
     public List<Board> getMyLikeBoardList(int userId, int page, int size) {
-        String query = "select P.postId, P.userId, nickname, U.profileUrl, title, category, region, thumbnail, P.content, postCreateAt, count(likeId) as likeCount, commentCount, hits\n" +
+        String query = "select P.postId, P.userId, nickname, U.profileUrl, title, category, region, thumbnail, P.content, postCreateAt, likeCount, commentCount, hits\n" +
                 "from Post P\n" +
-                "left join `Like` L on L.postId = P.postId\n" +
-                "left join User U on P.userId = U.userId\n" +
-                "left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId\n" +
-                "left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId\n" +
+                "         left join User U on P.userId = U.userId\n" +
+                "         left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId\n" +
+                "         left join (SELECT postId, userId, animalId, Count(likeId) as likeCount FROM `Like` GROUP BY postId) L on L.postId = P.postId\n" +
+                "         left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId\n" +
                 "where L.userId = ? and L.animalId is null\n" +
                 "group by P.postId\n" +
                 "order by P.postId desc\n" +
