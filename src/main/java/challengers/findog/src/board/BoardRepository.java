@@ -139,13 +139,13 @@ public class BoardRepository {
 
     //게시글 좋아요
     public void likeBoard(int postId, int userId) {
-        String query = "insert into `Like` (userId, postId) VALUES (?,?)";
+        String query = "insert into `Like` (postId, userId) VALUES (?,?)";
         this.jdbcTemplate.update(query, postId, userId);
     }
 
     //게시글 좋아요 취소
     public void likeCancelBoard(int postId , int userId) {
-        String query = "delete from `Like` where userId =? and postId =?";
+        String query = "delete from `Like` where postId =? and userId =?";
         this.jdbcTemplate.update(query, postId, userId);
     }
 
