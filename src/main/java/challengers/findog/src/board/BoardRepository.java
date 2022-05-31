@@ -23,8 +23,8 @@ public class BoardRepository {
 
     //게시글 작성
     public int createBoard(PostBoardReq postBoardReq) {
-        String query = "insert into Post(userId, title, category, content) value (?, ?, ?, ?)";
-        Object[] postBoardParams = new Object[]{postBoardReq.getUserId(), postBoardReq.getTitle(), postBoardReq.getCategory(), postBoardReq.getContent()};
+        String query = "insert into Post(userId, title, category, region, content) value (?, ?, ?, ?, ?)";
+        Object[] postBoardParams = new Object[]{postBoardReq.getUserId(), postBoardReq.getTitle(), postBoardReq.getCategory(), postBoardReq.getRegion(), postBoardReq.getContent()};
         this.jdbcTemplate.update(query, postBoardParams);
 
         String lastInsertIdQuery = "select last_insert_id()";
@@ -372,5 +372,11 @@ public class BoardRepository {
     public int deleteCommentByPostId(int postId) {
         String query = "delete from Comment where postId = ?";
         return jdbcTemplate.update(query, postId);
+    }
+
+    //포스트 댓글 존재 여부 확인
+    public int existComment(int postId) {
+        String query = "select exists (select * from Comment where postId = ?)";
+        return jdbcTemplate.queryForObject(query, int.class, postId);
     }
 }
