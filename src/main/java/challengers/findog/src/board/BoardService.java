@@ -31,6 +31,7 @@ public class BoardService {
             int postId;
             String title = postBoardReq.getTitle();
             int category = postBoardReq.getCategory();
+            int region = postBoardReq.getRegion();
             String content = postBoardReq.getContent();
             ArrayList<MultipartFile> imgFiles = postBoardReq.getImgFiles();
             if (title.isEmpty() || title.isBlank()) {
@@ -38,6 +39,9 @@ public class BoardService {
             }
             if (category == 0 || category > 4) {
                 throw new BaseException(EMPTY_CATEGORY);
+            }
+            if (region == 0 || region > 13) {
+                throw new BaseException(EMPTY_REGION);
             }
             if (content.isEmpty() || content.isBlank()) {
                 throw new BaseException(EMPTY_CONTENT);
