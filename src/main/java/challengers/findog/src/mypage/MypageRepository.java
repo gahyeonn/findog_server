@@ -86,9 +86,9 @@ public class MypageRepository {
     //내가 좋아요한 글 조회
     public List<Board> getMyLikeBoardList(int userId, int page, int size) {
         String query = "select P.postId, P.userId, nickname, profileUrl, title, category, region, thumbnail, P.content, postCreateAt, likeCount, commentCount, hits\n" +
-                "from (SELECT * from User where userId = ?) as U\n" +
-                "         natural join `Like` L\n" +
-                "         left join Post P on L.postId = P.postId\n" +
+                "from (select * from `Like` where userId = ?) L\n" +
+                "         join Post P on P.postId = L.postId\n" +
+                "         join User U on P.userId = U.userId\n" +
                 "         left join (select userId, postId, count(likeId) as likeCount from `Like` group by postId) LC on P.postId = LC.postId\n" +
                 "         left join (SELECT postId, Count(commentId) as commentCount FROM Comment GROUP BY postId) C on C.postId = P.postId\n" +
                 "         left join (SELECT postId, imgUrl as thumbnail FROM Image GROUP BY postId) I on I.postId = P.postId\n" +
