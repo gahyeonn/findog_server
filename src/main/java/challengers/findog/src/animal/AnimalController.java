@@ -162,8 +162,7 @@ public class AnimalController {
      * @return
      */
     @PostMapping("/searchImage")
-    public ResponseEntity<?> searchImage(@ModelAttribute GetImageReq getImageReq) throws IOException {
-    //public BaseResponse<GetAnimalListRes> uploadImages(@ModelAttribute GetImageReq getImageReq) {
+    public ResponseEntity<?> searchImage(@ModelAttribute GetImageReq getImageReq) {
 
         LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
         JsonNode response;
@@ -188,23 +187,7 @@ public class AnimalController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-//        }  catch (BaseException e){
-//            return new BaseResponse<>(e.getStatus());
-//        }
-        //return new ResponseEntity<>(response, httpStatus);
-        //return new BaseResponse<>(searchAnimals("breed" = response.toString()));
 
-        String classNm = null;
-        try{
-            JSONParser parser	= new JSONParser();
-            JSONObject obj 		= (JSONObject)parser.parse(response.toString());
-            classNm = obj.get("class_name").toString();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        BaseResponse<GetAnimalListRes> getAnimalListRes = searchAnimals(1, 6, null, null, null, classNm, null);
-
-        return new ResponseEntity<>(getAnimalListRes, httpStatus);
+        return new ResponseEntity<>(response, httpStatus);
     }
 }
