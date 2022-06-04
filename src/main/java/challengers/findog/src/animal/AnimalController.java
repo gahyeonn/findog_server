@@ -162,7 +162,9 @@ public class AnimalController {
      * @return
      */
     @PostMapping("/searchImage")
+
     public ResponseEntity<?> searchImage(@ModelAttribute GetImageReq getImageReq) {
+
 
         LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
         JsonNode response;
@@ -189,5 +191,6 @@ public class AnimalController {
         }
 
         return new ResponseEntity<>(response, httpStatus);
+
     }
 }
